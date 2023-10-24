@@ -1,3 +1,4 @@
+import 'package:calculadora_imc/pages/sign_up.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/terms_text.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +86,12 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignUPPage()));
+                      },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(
                           fontColorCard,
@@ -121,18 +127,12 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           onPressed: () {
                             showModalBottomSheet(
-                              backgroundColor: Colors.transparent,
                               context: context,
-                              elevation: 0,
+                              backgroundColor: cardColor,
                               builder: (BuildContext context) {
                                 return Container(
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(20),
-                                      topRight: Radius.circular(20),
-                                    ),
-                                    color: cardColor,
-                                  ),
+                                  margin: const EdgeInsets.only(
+                                      top: 20, bottom: 15),
                                   child: Scrollbar(
                                     child: ListView.builder(
                                       itemCount: terms.length,
