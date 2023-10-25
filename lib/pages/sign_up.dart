@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:calculadora_imc/pages/login_page.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -96,7 +97,13 @@ class _SignUPPageState extends State<SignUPPage> {
                                       FontAwesomeIcons.arrowLeftLong,
                                       color: backGroundColor,
                                     ),
-                                    onTap: () => Navigator.pop(context),
+                                    onTap: () => Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginPage()),
+                                      (route) => false,
+                                    ),
                                   ),
                                 ),
                                 Container(

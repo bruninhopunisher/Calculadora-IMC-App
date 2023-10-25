@@ -57,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                       ElevatedButton(
                         onPressed: () {},
                         style: ButtonStyle(
+                          elevation: MaterialStateProperty.all(20),
                           backgroundColor: MaterialStateProperty.all(
                             backGroundColor,
                           ),
@@ -86,12 +87,15 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SignUPPage()));
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignUPPage()),
+                            (route) => false,
+                          );
                         },
                         style: ButtonStyle(
+                          elevation: MaterialStateProperty.all(20),
                           backgroundColor: MaterialStateProperty.all(
                             fontColorCard,
                           ),
