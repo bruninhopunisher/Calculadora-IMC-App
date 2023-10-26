@@ -82,26 +82,25 @@ class _LoginPageState extends State<LoginPage> {
                       color: backGroundColor,
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                      elevation: MaterialStateProperty.all(20),
-                      backgroundColor: MaterialStateProperty.all(
-                        fontColorCard,
+                  Material(
+                    color: Colors.transparent,
+                    elevation: 20,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(25),
+                        color: fontColorCard2,
                       ),
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.symmetric(
-                          horizontal: 74,
-                          vertical: 15,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 45,
+                        vertical: 15,
+                      ),
+                      child: const Text(
+                        'Arraste para o lado',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
-                      ),
-                    ),
-                    child: const Text(
-                      'Arraste para o lado',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
                       ),
                     ),
                   ),

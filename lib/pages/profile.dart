@@ -10,9 +10,8 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  String _nome = 'Usuario';
-  String _image = 'aaaaaaaa';
-  String _text = 'aaaaaaaa';
+  final String _image = 'aaaaaaaa';
+  final String _text = 'aaaaaaaa';
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +68,7 @@ class _ProfileState extends State<Profile> {
                 Container(
                   alignment: Alignment.center,
                   child: Text(
-                    _text ?? 'Caracter sem valor',
+                    _text,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -91,7 +90,7 @@ class _ProfileState extends State<Profile> {
                 Container(
                   alignment: Alignment.center,
                   child: Text(
-                    _text ?? 'Caracter sem valor',
+                    _text,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -113,7 +112,7 @@ class _ProfileState extends State<Profile> {
                 Container(
                   alignment: Alignment.center,
                   child: Text(
-                    _text ?? 'Caracter sem valor',
+                    _text,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
