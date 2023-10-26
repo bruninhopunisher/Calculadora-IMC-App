@@ -1,5 +1,7 @@
+import 'package:calculadora_imc/pages/home_page.dart';
 import 'package:calculadora_imc/pages/sign_up.dart';
 import 'package:calculadora_imc/utils/colors.dart';
+import 'package:calculadora_imc/utils/navigator_page.dart';
 import 'package:calculadora_imc/utils/terms_text.dart';
 import 'package:flutter/material.dart';
 
@@ -55,7 +57,15 @@ class _LoginPageState extends State<LoginPage> {
                             color: fontColorCard),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const NavigatorPage(),
+                            ),
+                            (route) => false,
+                          );
+                        },
                         style: ButtonStyle(
                           elevation: MaterialStateProperty.all(20),
                           backgroundColor: MaterialStateProperty.all(

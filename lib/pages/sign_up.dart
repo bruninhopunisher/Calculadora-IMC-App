@@ -31,6 +31,7 @@ class _SignUPPageState extends State<SignUPPage> {
   final TextEditingController _controllerSexo = TextEditingController();
 
   cropImage(XFile imageFile) async {
+    // ignore: unused_local_variable
     CroppedFile? croppedFile = await ImageCropper().cropImage(
       sourcePath: imageFile.path,
       aspectRatioPresets: [
@@ -260,7 +261,7 @@ class _SignUPPageState extends State<SignUPPage> {
                                 left: 25, right: 25, bottom: 20),
                             child: TextField(
                               textInputAction: TextInputAction.next,
-                              controller: _controllerNome,
+                              controller: _controllerIdade,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 labelText: 'Idade',
@@ -412,8 +413,8 @@ class _SignUPPageState extends State<SignUPPage> {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 if (_controllerNome.text.trim().isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
+                                    SnackBar(
+                                      content: const Text(
                                         'Digite um valor válido para o nome!',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
@@ -422,14 +423,21 @@ class _SignUPPageState extends State<SignUPPage> {
                                           color: cardColor,
                                         ),
                                       ),
+                                      duration:
+                                          const Duration(milliseconds: 2000),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
                                     ),
                                   );
                                   return;
                                 }
                                 if (_controllerIdade.text.trim().isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
+                                    SnackBar(
+                                      content: const Text(
                                         'O campo idade não pode ser vazio!',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
@@ -437,6 +445,13 @@ class _SignUPPageState extends State<SignUPPage> {
                                           fontWeight: FontWeight.bold,
                                           color: cardColor,
                                         ),
+                                      ),
+                                      duration:
+                                          const Duration(milliseconds: 2000),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
                                       ),
                                     ),
                                   );
@@ -460,8 +475,8 @@ class _SignUPPageState extends State<SignUPPage> {
                                 }
                                 if (_controllerPeso.text.trim().isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
+                                    SnackBar(
+                                      content: const Text(
                                         'O campo peso não pode ser vazio!',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
@@ -469,6 +484,36 @@ class _SignUPPageState extends State<SignUPPage> {
                                           fontWeight: FontWeight.bold,
                                           color: cardColor,
                                         ),
+                                      ),
+                                      duration:
+                                          const Duration(milliseconds: 2000),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                if (_controllerSexo.text.trim().isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text(
+                                        'O campo sexo não pode ser vazio!',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold,
+                                          color: cardColor,
+                                        ),
+                                      ),
+                                      duration:
+                                          const Duration(milliseconds: 2000),
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
                                       ),
                                     ),
                                   );
