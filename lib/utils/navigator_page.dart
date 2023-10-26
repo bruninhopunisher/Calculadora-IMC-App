@@ -2,7 +2,6 @@ import 'package:calculadora_imc/pages/home_page.dart';
 import 'package:calculadora_imc/pages/profile.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class NavigatorPage extends StatefulWidget {
@@ -13,10 +12,6 @@ class NavigatorPage extends StatefulWidget {
 }
 
 class _NavigatorPageState extends State<NavigatorPage> {
-  String _nome = 'Usuario';
-  String _image = 'aaaaaaaa';
-  String _text = 'aaaaaaaa';
-
   int _currentIndex = 0;
   final _pageController = PageController();
 
@@ -41,6 +36,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
                 spacing: 10,
                 dotColor: Colors.grey,
                 activeDotColor: cardColor,
+                radius: 3,
               ),
             ),
             SizedBox(

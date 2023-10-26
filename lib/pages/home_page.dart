@@ -1,5 +1,3 @@
-import 'package:brasil_fields/brasil_fields.dart';
-import 'package:calculadora_imc/pages/login_page.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -75,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         alignment: Alignment.center,
                         child: Text(
-                          _text ?? 'Caracter sem valor',
+                          _text,
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -97,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         alignment: Alignment.center,
                         child: Text(
-                          _text ?? 'Caracter sem valor',
+                          _text,
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -119,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         alignment: Alignment.center,
                         child: Text(
-                          _text ?? 'Caracter sem valor',
+                          _text,
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
