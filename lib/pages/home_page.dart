@@ -1,6 +1,5 @@
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,7 +32,7 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         alignment: Alignment.center,
                         child: Text(
-                          'Olá, $_nome',
+                          'Olá, ',
                           style: TextStyle(
                             fontSize: 40,
                             fontWeight: FontWeight.values[8],
@@ -60,7 +59,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                       ),
                       Container(
-                        margin: const EdgeInsets.only(left: 25, bottom: 20),
+                        margin: const EdgeInsets.only(left: 25, bottom: 15),
                         child: const Text(
                           'Seu IMC:',
                           style: TextStyle(
@@ -71,6 +70,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Container(
+                        margin: const EdgeInsets.only(bottom: 20),
                         alignment: Alignment.center,
                         child: Text(
                           _text,
@@ -82,9 +82,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Container(
-                        margin: const EdgeInsets.only(left: 25, bottom: 20),
+                        margin: const EdgeInsets.only(left: 25, bottom: 15),
                         child: const Text(
-                          'Seu IMC:',
+                          'Classificação:',
                           style: TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
@@ -93,6 +93,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Container(
+                        margin: const EdgeInsets.only(bottom: 20),
                         alignment: Alignment.center,
                         child: Text(
                           _text,
@@ -104,9 +105,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Container(
-                        margin: const EdgeInsets.only(left: 25, bottom: 20),
+                        margin: const EdgeInsets.only(left: 25, bottom: 15),
                         child: const Text(
-                          'Seu IMC:',
+                          'Risco de Comorbidade:',
                           style: TextStyle(
                             fontSize: 25,
                             fontWeight: FontWeight.bold,
@@ -115,6 +116,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Container(
+                        margin: const EdgeInsets.only(bottom: 20),
                         alignment: Alignment.center,
                         child: Text(
                           _text,
