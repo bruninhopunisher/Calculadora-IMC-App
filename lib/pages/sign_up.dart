@@ -1,7 +1,11 @@
 import 'dart:io';
 
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:calculadora_imc/database/db.dart';
+import 'package:calculadora_imc/model/pessoa_model.dart';
+import 'package:calculadora_imc/pages/home_page.dart';
 import 'package:calculadora_imc/utils/colors.dart';
+import 'package:calculadora_imc/utils/navigator_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,6 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class SignUPPage extends StatefulWidget {
   const SignUPPage({super.key});
@@ -279,10 +284,7 @@ class _SignUPPageState extends State<SignUPPage> {
                             color: backGroundColor,
                             wordSpacing: 5,
                           ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            AlturaInputFormatter(),
-                          ],
+                          // inputFormatters: [],
                         ),
                       ),
                       Padding(
@@ -314,10 +316,10 @@ class _SignUPPageState extends State<SignUPPage> {
                             color: backGroundColor,
                             wordSpacing: 5,
                           ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            AlturaInputFormatter(),
-                          ],
+                          // inputFormatters: [
+                          //   FilteringTextInputFormatter.digitsOnly,
+                          //   AlturaInputFormatter(),
+                          // ],
                         ),
                       ),
                       Row(
@@ -372,8 +374,9 @@ class _SignUPPageState extends State<SignUPPage> {
                       Container(
                         margin: const EdgeInsets.only(top: 20),
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
+
                             if (_controllerNome.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -474,6 +477,32 @@ class _SignUPPageState extends State<SignUPPage> {
                               );
                               return;
                             }
+
+                            PessoaModel pessoaModelLogin = PessoaModel(
+                              nome: _controllerNome.text,
+                              idade: int.parse(_controllerIdade.text),
+                              altura: double.parse(_controllerAltura.text),
+                              peso: double.parse(_controllerPeso.text),
+                              sexo: _controllerSexo.text,
+                            );
+
+                            await DB.instance.openDataBase(pessoaModelLogin);
+                            Database database = await DB.instance.database;
+
+                            print(
+                                '-------------------------------------------------Insert Database: ${pessoaModelLogin.toMap()}');
+                            List<Map> list =
+                                await database.rawQuery('SELECT * FROM PESSOA');
+                            print('---------------------SELECT DATABASE $list');
+
+                            await Future.delayed(const Duration(seconds: 2));
+                            // ignore: use_build_context_synchronously
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const NavigatorPage(),
+                                ),
+                                (route) => false);
                           },
                           style: ButtonStyle(
                             elevation: MaterialStateProperty.all(20),

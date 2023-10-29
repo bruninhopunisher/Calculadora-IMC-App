@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:brasil_fields/brasil_fields.dart';
-import 'package:calculadora_imc/model/pessoa.dart';
+import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,16 +49,11 @@ class _ProfileState extends State<Profile> {
     setState(() {});
   }
 
-  final TextEditingController _controllerNome =
-      TextEditingController(text: Pessoa().getNome);
-  final TextEditingController _controllerIdade =
-      TextEditingController(text: Pessoa().getIdade.toString());
-  final TextEditingController _controllerAltura =
-      TextEditingController(text: Pessoa().getAltura.toString());
-  final TextEditingController _controllerPeso =
-      TextEditingController(text: Pessoa().getPeso.toString());
-  final TextEditingController _controllerSexo =
-      TextEditingController(text: Pessoa().getSexo);
+  final TextEditingController _controllerNome = TextEditingController();
+  final TextEditingController _controllerIdade = TextEditingController();
+  final TextEditingController _controllerAltura = TextEditingController();
+  final TextEditingController _controllerPeso = TextEditingController();
+  final TextEditingController _controllerSexo = TextEditingController();
 
   final _value = '';
 

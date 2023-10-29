@@ -10,10 +10,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _nome = 'Usuario Teste';
-  String _image = 'aaaaaaaa';
-  String _text = 'aaaaaaaa';
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -43,20 +39,29 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         margin: const EdgeInsets.only(top: 20, bottom: 20),
                         alignment: Alignment.center,
-                        child: _image == null
-                            ? const CircleAvatar(
-                                radius: 50,
-                                backgroundColor: backGroundColor,
-                                child: FaIcon(
-                                  FontAwesomeIcons.person,
-                                  color: cardColor,
-                                  size: 50,
-                                ),
-                              )
-                            : const CircleAvatar(
-                                backgroundColor: backGroundColor,
-                                radius: 50,
-                              ),
+                        // child: _image == null
+                        //     ? const CircleAvatar(
+                        //         radius: 50,
+                        //         backgroundColor: backGroundColor,
+                        //         child: FaIcon(
+                        //           FontAwesomeIcons.person,
+                        //           color: cardColor,
+                        //           size: 50,
+                        //         ),
+                        //       )
+                        //     : const CircleAvatar(
+                        //         backgroundColor: backGroundColor,
+                        //         radius: 50,
+                        //       ),
+                        child: const CircleAvatar(
+                          radius: 50,
+                          backgroundColor: backGroundColor,
+                          child: FaIcon(
+                            FontAwesomeIcons.person,
+                            color: cardColor,
+                            size: 50,
+                          ),
+                        ),
                       ),
                       Container(
                         margin: const EdgeInsets.only(left: 25, bottom: 15),
@@ -73,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                         margin: const EdgeInsets.only(bottom: 20),
                         alignment: Alignment.center,
                         child: Text(
-                          _text,
+                          '',
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -96,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                         margin: const EdgeInsets.only(bottom: 20),
                         alignment: Alignment.center,
                         child: Text(
-                          _text,
+                          '',
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -119,7 +124,7 @@ class _HomePageState extends State<HomePage> {
                         margin: const EdgeInsets.only(bottom: 20),
                         alignment: Alignment.center,
                         child: Text(
-                          _text,
+                          '',
                           style: const TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
