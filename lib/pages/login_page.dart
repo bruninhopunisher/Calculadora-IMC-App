@@ -1,7 +1,10 @@
+import 'package:calculadora_imc/database/db.dart';
+import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_page.dart';
 import 'package:calculadora_imc/utils/terms_text.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,6 +15,37 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final ScrollController controller = ScrollController();
+  int _controllerID = 0;
+  bool _controllerEnter = false;
+
+  @override
+  void initState() {
+    super.initState();
+    carregarDados();
+  }
+
+  void carregarDados() async {
+    Database database = await DB.instance.database;
+    List<Map<String, dynamic>> list =
+        await database.rawQuery('SELECT * FROM PESSOA');
+    if (list.isNotEmpty) {
+      PessoaModel pessoaModel = PessoaModel(
+        id: list[0]['id'],
+        nome: list[0]['nome'],
+        idade: list[0]['idade'],
+        altura: double.parse(list[0]['altura']),
+        peso: double.parse(list[0]['peso']),
+        sexo: list[0]['sexo'],
+      );
+      print(
+          '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
+      print('------------------Lista------- $list');
+      print('------------------ControllerId------- $_controllerID');
+      _controllerEnter = true;
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,14 +78,29 @@ class _LoginPageState extends State<LoginPage> {
                         color: fontColorCard),
                   ),
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const NavigatorPage(),
-                        ),
-                        (route) => false,
-                      );
+                    onPressed: () async {
+                      _controllerEnter == false
+                          ? showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Atenção'),
+                                content: const Text(
+                                    'Você não possui cadastro, por favor, cadastre-se arrastando para o lado'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Ok'),
+                                  )
+                                ],
+                              ),
+                            )
+                          : Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NavigatorPage(),
+                              ),
+                              (route) => false,
+                            );
                     },
                     style: ButtonStyle(
                       elevation: MaterialStateProperty.all(20),

@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:brasil_fields/brasil_fields.dart';
 import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
-import 'package:calculadora_imc/pages/home_page.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_page.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +12,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 
 class SignUPPage extends StatefulWidget {
   const SignUPPage({super.key});

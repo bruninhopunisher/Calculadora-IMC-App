@@ -59,4 +59,40 @@ class DB {
 
     return await database.insert('PESSOA', pessoaModel.toMap());
   }
+
+  // Recuperar dados na tabela
+  Future<PessoaModel> retriveDados() async {
+    Database database = await _initDatabase();
+    final List<Map<String, dynamic>> pessoaModel =
+        await database.rawQuery('PESSOA');
+    return PessoaModel(
+      id: pessoaModel[0]['id'],
+      nome: pessoaModel[0]['nome'],
+      idade: pessoaModel[0]['idade'],
+      altura: pessoaModel[0]['altura'],
+      peso: pessoaModel[0]['peso'],
+      sexo: pessoaModel[0]['sexo'],
+    );
+  }
+
+  // Uptade de dados na tabela
+  Future<void> updatePessoa(PessoaModel pessoaModel) async {
+    Database database = await _initDatabase();
+    await database.update(
+      'PESSOA',
+      pessoaModel.toMap(),
+      where: 'id = ?',
+      whereArgs: [pessoaModel.id],
+    );
+  }
+
+  // Deletar dados na tabela
+  Future<void> deletePessoa(int id) async {
+    Database database = await _initDatabase();
+    await database.delete(
+      'PESSOA',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }

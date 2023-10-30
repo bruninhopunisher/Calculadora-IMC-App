@@ -77,9 +77,9 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         margin: const EdgeInsets.only(bottom: 20),
                         alignment: Alignment.center,
-                        child: Text(
+                        child: const Text(
                           '',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: fontColorCard,
@@ -100,9 +100,9 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         margin: const EdgeInsets.only(bottom: 20),
                         alignment: Alignment.center,
-                        child: Text(
+                        child: const Text(
                           '',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: fontColorCard,
@@ -123,9 +123,9 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         margin: const EdgeInsets.only(bottom: 20),
                         alignment: Alignment.center,
-                        child: Text(
+                        child: const Text(
                           '',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: fontColorCard,

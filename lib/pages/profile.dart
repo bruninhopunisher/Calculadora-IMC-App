@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:brasil_fields/brasil_fields.dart';
 import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
@@ -506,8 +505,6 @@ class _ProfileState extends State<Profile> {
                               );
                               return;
                             } else {
-                              Database database = await DB.instance.database;
-
                               PessoaModel pessoaModel = PessoaModel(
                                   id: _controllerID,
                                   nome: _controllerNome.text.trim(),
@@ -516,14 +513,7 @@ class _ProfileState extends State<Profile> {
                                   peso: double.parse(_controllerPeso.text),
                                   sexo: _controllerSexo.trim());
 
-                              await database.update(
-                                'PESSOA',
-                                pessoaModel.toMap(),
-                                where: 'id = ?',
-                                whereArgs: [
-                                  (_controllerID),
-                                ],
-                              );
+                              await DB.instance.updatePessoa(pessoaModel);
                               print(
                                   '----------------------------updated: ${pessoaModel.toMap()}');
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -607,11 +597,8 @@ class _ProfileState extends State<Profile> {
                                       ),
                                       TextButton(
                                         onPressed: () async {
-                                          Database database =
-                                              await DB.instance.database;
-                                          await database.rawDelete(
-                                              'DELETE FROM PESSOA WHERE id = ?',
-                                              [(_controllerID)]);
+                                          await DB.instance
+                                              .deletePessoa(_controllerID);
 
                                           await Future.delayed(
                                               const Duration(seconds: 2));
