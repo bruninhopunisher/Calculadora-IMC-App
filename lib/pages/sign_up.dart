@@ -397,8 +397,7 @@ class _SignUPPageState extends State<SignUPPage> {
                                 ),
                               );
                               return;
-                            }
-                            if (_controllerIdade.text.trim().isEmpty) {
+                            } else if (_controllerIdade.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text(
@@ -418,8 +417,7 @@ class _SignUPPageState extends State<SignUPPage> {
                                 ),
                               );
                               return;
-                            }
-                            if (_controllerAltura.text.trim().isEmpty) {
+                            } else if (_controllerAltura.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
@@ -434,8 +432,7 @@ class _SignUPPageState extends State<SignUPPage> {
                                 ),
                               );
                               return;
-                            }
-                            if (_controllerPeso.text.trim().isEmpty) {
+                            } else if (_controllerPeso.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text(
@@ -455,8 +452,7 @@ class _SignUPPageState extends State<SignUPPage> {
                                 ),
                               );
                               return;
-                            }
-                            if (_controllerSexo.text.trim().isEmpty) {
+                            } else if (_controllerSexo.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text(
@@ -476,33 +472,27 @@ class _SignUPPageState extends State<SignUPPage> {
                                 ),
                               );
                               return;
+                            } else {
+                              PessoaModel pessoaModelLogin = PessoaModel(
+                                id: 0,
+                                nome: _controllerNome.text,
+                                idade: int.parse(_controllerIdade.text),
+                                altura: double.parse(_controllerAltura.text),
+                                peso: double.parse(_controllerPeso.text),
+                                sexo: _controllerSexo.text,
+                              );
+
+                              await DB.instance.openDataBase(pessoaModelLogin);
+
+                              await Future.delayed(const Duration(seconds: 2));
+                              // ignore: use_build_context_synchronously
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const NavigatorPage(),
+                                  ),
+                                  (route) => false);
                             }
-
-                            PessoaModel pessoaModelLogin = PessoaModel(
-                              nome: _controllerNome.text,
-                              idade: int.parse(_controllerIdade.text),
-                              altura: double.parse(_controllerAltura.text),
-                              peso: double.parse(_controllerPeso.text),
-                              sexo: _controllerSexo.text,
-                            );
-
-                            await DB.instance.openDataBase(pessoaModelLogin);
-                            Database database = await DB.instance.database;
-
-                            print(
-                                '-------------------------------------------------Insert Database: ${pessoaModelLogin.toMap()}');
-                            List<Map> list =
-                                await database.rawQuery('SELECT * FROM PESSOA');
-                            print('---------------------SELECT DATABASE $list');
-
-                            await Future.delayed(const Duration(seconds: 2));
-                            // ignore: use_build_context_synchronously
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const NavigatorPage(),
-                                ),
-                                (route) => false);
                           },
                           style: ButtonStyle(
                             elevation: MaterialStateProperty.all(20),

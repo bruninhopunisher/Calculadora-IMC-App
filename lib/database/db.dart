@@ -36,6 +36,7 @@ class DB {
   // Criação das estruturas das tabelas
   String get _pessoa => '''
     CREATE TABLE PESSOA (
+      id INTEGER AUTO_INCREMENT PRIMARY KEY,
       nome TEXT,
       idade INTEGER,
       peso TEXT,

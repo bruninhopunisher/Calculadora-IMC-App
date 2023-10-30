@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
+import 'package:calculadora_imc/utils/navigator_login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,6 +12,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -20,6 +23,13 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final ImagePicker _picker = ImagePicker();
+
+  final TextEditingController _controllerNome = TextEditingController();
+  final TextEditingController _controllerIdade = TextEditingController();
+  final TextEditingController _controllerAltura = TextEditingController();
+  final TextEditingController _controllerPeso = TextEditingController();
+  String _controllerSexo = '';
+  int _controllerID = 0;
 
   XFile? _image;
 
@@ -49,23 +59,37 @@ class _ProfileState extends State<Profile> {
     setState(() {});
   }
 
-  final TextEditingController _controllerNome = TextEditingController();
-  final TextEditingController _controllerIdade = TextEditingController();
-  final TextEditingController _controllerAltura = TextEditingController();
-  final TextEditingController _controllerPeso = TextEditingController();
-  final TextEditingController _controllerSexo = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    carregarDados();
+  }
 
-  final _value = '';
+  void carregarDados() async {
+    Database database = await DB.instance.database;
+    List<Map<String, dynamic>> list =
+        await database.rawQuery('SELECT * FROM PESSOA');
+    PessoaModel pessoaModel = PessoaModel(
+      id: list[0]['id'],
+      nome: list[0]['nome'],
+      idade: list[0]['idade'],
+      altura: double.parse(list[0]['altura']),
+      peso: double.parse(list[0]['peso']),
+      sexo: list[0]['sexo'],
+    );
 
-  // void setDados() {
-  //   setState(() {
-  //     Pessoa pessoa = Pessoa();
-  //     pessoa.setNome = _controllerNome.text;
-  //     pessoa.setIdade = int.parse(_controllerIdade.text);
-  //     pessoa.setAltura = double.parse(_controllerAltura.text);
-  //     pessoa.setPeso = double.parse(_controllerPeso.text);
-  //   });
-  // }
+    _controllerID = pessoaModel.id;
+    _controllerNome.text = pessoaModel.nome;
+    _controllerIdade.text = pessoaModel.idade.toString();
+    _controllerAltura.text = pessoaModel.altura.toString();
+    _controllerPeso.text = pessoaModel.peso.toString();
+    _controllerSexo = pessoaModel.sexo;
+
+    print(
+        '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
+    print('------------------Lista------- $list');
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -289,10 +313,10 @@ class _ProfileState extends State<Profile> {
                             color: backGroundColor,
                             wordSpacing: 5,
                           ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            AlturaInputFormatter(),
-                          ],
+                          // inputFormatters: [
+                          //   FilteringTextInputFormatter.digitsOnly,
+                          //   AlturaInputFormatter(),
+                          // ],
                         ),
                       ),
                       Padding(
@@ -324,10 +348,10 @@ class _ProfileState extends State<Profile> {
                             color: backGroundColor,
                             wordSpacing: 5,
                           ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            AlturaInputFormatter(),
-                          ],
+                          // inputFormatters: [
+                          //   FilteringTextInputFormatter.digitsOnly,
+                          //   AlturaInputFormatter(),
+                          // ],
                         ),
                       ),
                       Row(
@@ -341,7 +365,9 @@ class _ProfileState extends State<Profile> {
                               groupValue: _controllerSexo,
                               onChanged: (value) {
                                 setState(() {
-                                  _controllerSexo.text = _value;
+                                  _controllerSexo = 'Masculino';
+                                  print(
+                                      '---------RADIO------------------------ ${_controllerSexo.toString()}');
                                 });
                               },
                             ),
@@ -360,9 +386,13 @@ class _ProfileState extends State<Profile> {
                               value: 'Feminino',
                               groupValue: _controllerSexo,
                               onChanged: (value) {
-                                setState(() {
-                                  _controllerSexo.text = _value;
-                                });
+                                setState(
+                                  () {
+                                    _controllerSexo = 'Feminino';
+                                    print(
+                                        '---------RADIO------------------------ $_controllerSexo');
+                                  },
+                                );
                               },
                             ),
                           ),
@@ -378,7 +408,7 @@ class _ProfileState extends State<Profile> {
                       Container(
                         margin: const EdgeInsets.only(top: 20),
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
                             if (_controllerNome.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -400,8 +430,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               );
                               return;
-                            }
-                            if (_controllerIdade.text.trim().isEmpty) {
+                            } else if (_controllerIdade.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text(
@@ -421,8 +450,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               );
                               return;
-                            }
-                            if (_controllerAltura.text.trim().isEmpty) {
+                            } else if (_controllerAltura.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
@@ -437,8 +465,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               );
                               return;
-                            }
-                            if (_controllerPeso.text.trim().isEmpty) {
+                            } else if (_controllerPeso.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text(
@@ -458,8 +485,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               );
                               return;
-                            }
-                            if (_controllerSexo.text.trim().isEmpty) {
+                            } else if (_controllerSexo.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text(
@@ -479,6 +505,45 @@ class _ProfileState extends State<Profile> {
                                 ),
                               );
                               return;
+                            } else {
+                              Database database = await DB.instance.database;
+
+                              PessoaModel pessoaModel = PessoaModel(
+                                  id: _controllerID,
+                                  nome: _controllerNome.text.trim(),
+                                  idade: int.parse(_controllerIdade.text),
+                                  altura: double.parse(_controllerAltura.text),
+                                  peso: double.parse(_controllerPeso.text),
+                                  sexo: _controllerSexo.trim());
+
+                              await database.update(
+                                'PESSOA',
+                                pessoaModel.toMap(),
+                                where: 'id = ?',
+                                whereArgs: [
+                                  (_controllerID),
+                                ],
+                              );
+                              print(
+                                  '----------------------------updated: ${pessoaModel.toMap()}');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text(
+                                    'Dados alterados com sucesso!',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      color: cardColor,
+                                    ),
+                                  ),
+                                  duration: const Duration(milliseconds: 2000),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                              );
                             }
                           },
                           style: ButtonStyle(
@@ -506,108 +571,70 @@ class _ProfileState extends State<Profile> {
                       Container(
                         margin: const EdgeInsets.only(top: 20),
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
-                            if (_controllerNome.text.trim().isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text(
-                                    'Digite um valor válido para o nome!',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: cardColor,
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    backgroundColor: cardColor,
+                                    title: const Text(
+                                      'Excluir Conta',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: backGroundColor,
+                                      ),
                                     ),
-                                  ),
-                                  duration: const Duration(milliseconds: 2000),
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                              );
-                              return;
-                            }
-                            if (_controllerIdade.text.trim().isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text(
-                                    'O campo idade não pode ser vazio!',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: cardColor,
+                                    content: const Text(
+                                      'Deseja realmente excluir sua conta? Isso implicara em perder todos os dados salvos!',
+                                      style: TextStyle(
+                                        color: backGroundColor,
+                                      ),
+                                      textAlign: TextAlign.justify,
                                     ),
-                                  ),
-                                  duration: const Duration(milliseconds: 2000),
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                              );
-                              return;
-                            }
-                            if (_controllerAltura.text.trim().isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'O campo altura não pode ser vazio!',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: cardColor,
-                                    ),
-                                  ),
-                                ),
-                              );
-                              return;
-                            }
-                            if (_controllerPeso.text.trim().isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text(
-                                    'O campo peso não pode ser vazio!',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: cardColor,
-                                    ),
-                                  ),
-                                  duration: const Duration(milliseconds: 2000),
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                              );
-                              return;
-                            }
-                            if (_controllerSexo.text.trim().isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text(
-                                    'O campo sexo não pode ser vazio!',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      color: cardColor,
-                                    ),
-                                  ),
-                                  duration: const Duration(milliseconds: 2000),
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                              );
-                              return;
-                            }
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                          'Não',
+                                          style: TextStyle(
+                                            color: backGroundColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          Database database =
+                                              await DB.instance.database;
+                                          await database.rawDelete(
+                                              'DELETE FROM PESSOA WHERE id = ?',
+                                              [(_controllerID)]);
+
+                                          await Future.delayed(
+                                              const Duration(seconds: 2));
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const NavigatorLoginPage(),
+                                            ),
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Sim',
+                                          style: TextStyle(
+                                            color: backGroundColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                });
                           },
                           style: ButtonStyle(
                             elevation: MaterialStateProperty.all(20),
