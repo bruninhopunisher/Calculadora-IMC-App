@@ -5,7 +5,6 @@ import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -477,11 +476,14 @@ class _SignUPPageState extends State<SignUPPage> {
                                 altura: double.parse(_controllerAltura.text),
                                 peso: double.parse(_controllerPeso.text),
                                 sexo: _controllerSexo.text,
+                                foto: _image?.path ?? '',
                               );
 
                               await DB.instance.openDataBase(pessoaModelLogin);
 
-                              await Future.delayed(const Duration(seconds: 2));
+                              await Future.delayed(
+                                const Duration(seconds: 2),
+                              );
                               // ignore: use_build_context_synchronously
                               Navigator.pushAndRemoveUntil(
                                   context,

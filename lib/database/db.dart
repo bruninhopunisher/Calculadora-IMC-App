@@ -41,7 +41,8 @@ class DB {
       idade INTEGER,
       peso TEXT,
       altura TEXT,
-      sexo TEXT
+      sexo TEXT,
+      foto TEXT
     )
   ''';
 
@@ -72,6 +73,7 @@ class DB {
       altura: pessoaModel[0]['altura'],
       peso: pessoaModel[0]['peso'],
       sexo: pessoaModel[0]['sexo'],
+      foto: pessoaModel[0]['foto'],
     );
   }
 

@@ -59,7 +59,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
                     },
                     children: const [
                       HomePage(),
-                      Profile(),
+                      ProfilePage(),
                     ],
                   ),
                 ),

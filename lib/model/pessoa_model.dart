@@ -5,6 +5,7 @@ class PessoaModel {
   final double altura;
   final double peso;
   final String sexo;
+  final String foto;
 
   PessoaModel({
     required this.id,
@@ -13,6 +14,7 @@ class PessoaModel {
     required this.altura,
     required this.peso,
     required this.sexo,
+    required this.foto,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class PessoaModel {
       'altura': altura,
       'peso': peso,
       'sexo': sexo,
+      'foto': foto,
     };
   }
 }

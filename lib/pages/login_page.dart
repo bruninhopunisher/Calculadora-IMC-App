@@ -15,7 +15,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final ScrollController controller = ScrollController();
-  int _controllerID = 0;
+  final int _controllerID = 0;
   bool _controllerEnter = false;
 
   @override
@@ -36,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
         altura: double.parse(list[0]['altura']),
         peso: double.parse(list[0]['peso']),
         sexo: list[0]['sexo'],
+        foto: list[0]['foto'],
       );
       print(
           '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
@@ -83,13 +84,32 @@ class _LoginPageState extends State<LoginPage> {
                           ? showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: const Text('Atenção'),
+                                backgroundColor: cardColor,
+                                title: const Text(
+                                  'Atenção',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: backGroundColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 content: const Text(
-                                    'Você não possui cadastro, por favor, cadastre-se arrastando para o lado'),
+                                  'Você não possui cadastro, por favor, cadastre-se arrastando para o lado.',
+                                  textAlign: TextAlign.justify,
+                                  style: TextStyle(
+                                    color: backGroundColor,
+                                    fontSize: 16,
+                                  ),
+                                ),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(context),
-                                    child: const Text('Ok'),
+                                    child: const Text(
+                                      'Ok',
+                                      style: TextStyle(
+                                        color: backGroundColor,
+                                      ),
+                                    ),
                                   )
                                 ],
                               ),
