@@ -98,20 +98,23 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {});
   }
 
-  Future<void> _refresh() async {
+  Future _refresh() async {
     await Future.delayed(const Duration(seconds: 1));
     carregarDados();
-
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator.adaptive(
-      onRefresh: () async => await _refresh(),
-      child: Scaffold(
-        backgroundColor: cardColor,
-        body: Column(
+    return Scaffold(
+      backgroundColor: cardColor,
+      body: RefreshIndicator(
+        onRefresh: () => _refresh(),
+        strokeWidth: 3,
+        displacement: 95,
+        edgeOffset: 50,
+        color: backGroundColor,
+        child: Column(
           children: [
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.55,

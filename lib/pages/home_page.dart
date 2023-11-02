@@ -10,6 +10,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<String> _classificacaoIMC() async {
+    String classificacao = '';
+    String riscoComorbidade = '';
+    return classificacao + riscoComorbidade;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
