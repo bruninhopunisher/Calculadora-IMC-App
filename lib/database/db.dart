@@ -7,6 +7,9 @@ class DB {
   // Construtor com acesso privado
   DB._();
 
+  // Construtor para uso publico dos métodos
+  DB();
+
   // Instância única de DB
   static final DB instance = DB._();
 
