@@ -86,7 +86,7 @@ class DB {
   }
 
   // Query from database
-  Future<List<Map<String, dynamic>>> query(String fields, String table, String condition) async {
+  Future<List<Map<String, dynamic>>> query(String? fields, String? table, String? condition) async {
     Database database = await _initDatabase();
     List<Map<String, dynamic>> maps;
     if(table == null) {
