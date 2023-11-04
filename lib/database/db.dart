@@ -82,6 +82,25 @@ class DB {
     );
   }
 
+  // Query from database
+  Future<List<Map<String, dynamic>>> query(String fields, String table, String condition) async {
+    Database database = await _initDatabase();
+    List<Map<String, dynamic>> maps;
+    if(table == null) {
+      throw Exception('-------------------- Tabela não informada --------------------');
+    }
+    if(fields == null) {
+      maps = await database.rawQuery('SELECT * FROM $table');
+      return maps;
+    }
+    if(condition == null) {
+      maps = await database.rawQuery('SELECT $fields FROM $table');
+      return maps;
+    }
+    maps = await database.rawQuery('SELECT $fields FROM $table WHERE $condition');
+    return maps;
+  }
+
   // Uptade de dados na tabela Pessoa
   Future<void> updatePessoa(PessoaModel pessoaModel) async {
     Database database = await _initDatabase();
