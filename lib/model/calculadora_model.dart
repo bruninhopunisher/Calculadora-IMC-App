@@ -1,21 +1,20 @@
 import 'package:calculadora_imc/model/pessoa_model.dart';
 
-class CalculadraIMCModel extends PessoaModel {
+class CalculadoraIMCModel extends PessoaModel {
   final double imc;
 
-  CalculadraIMCModel({
+  CalculadoraIMCModel({
     required this.imc,
-    required peso,
-    required altura,
+    required double peso,
+    required double altura,
     required int id,
     required String nome,
-    required int idade,
     required String sexo,
     required String foto,
   }) : super(
           id: id,
           nome: nome,
-          idade: idade,
+          idade: 0,
           altura: altura,
           peso: peso,
           sexo: sexo,

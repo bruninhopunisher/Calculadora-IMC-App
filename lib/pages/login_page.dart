@@ -1,4 +1,5 @@
 import 'package:calculadora_imc/database/db.dart';
+import 'package:calculadora_imc/model/calculadora_model.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_page.dart';
@@ -28,6 +29,9 @@ class _LoginPageState extends State<LoginPage> {
     Database database = await DB.instance.database;
     List<Map<String, dynamic>> list =
         await database.rawQuery('SELECT * FROM PESSOA');
+
+    List<Map<String, dynamic>> listCalculadora =
+        await database.rawQuery('SELECT * FROM CALCULADORA');
     if (list.isNotEmpty) {
       PessoaModel pessoaModel = PessoaModel(
         id: list[0]['id'],
@@ -40,10 +44,22 @@ class _LoginPageState extends State<LoginPage> {
       );
       print(
           '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
-      print('------------------Lista------- $list');
       print('------------------ControllerId------- $_controllerID');
+    } else if (listCalculadora.isNotEmpty) {
+      CalculadoraIMCModel calculadoraIMCModel = CalculadoraIMCModel(
+        imc: double.parse(listCalculadora[0]['seu_imc']),
+        peso: double.parse(listCalculadora[0]['peso']),
+        altura: double.parse(listCalculadora[0]['altura']),
+        id: listCalculadora[0]['id'],
+        nome: listCalculadora[0]['nome'],
+        sexo: listCalculadora[0]['sexo'],
+        foto: listCalculadora[0]['foto'],
+      );
+      print(
+          '----------------Calculadora Model------------------------ ${calculadoraIMCModel.toMap()}');
       _controllerEnter = true;
     }
+
     setState(() {});
   }
 

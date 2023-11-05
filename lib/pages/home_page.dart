@@ -1,6 +1,8 @@
+import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sqflite/sqflite.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,10 +12,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Future<String> _classificacaoIMC() async {
-    String classificacao = '';
-    String riscoComorbidade = '';
-    return classificacao + riscoComorbidade;
+  carregarDados() async {
+    Database database = await DB.instance.database;
+
+    List<Map<String, dynamic>> _list =
+        await database.rawQuery('SELECT * FROM CALCULADORA');
+
+    print(
+        '--------------Calculadora Model ----------------- ${_list.toList()}');
   }
 
   @override
