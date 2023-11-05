@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:calculadora_imc/database/db.dart';
+import 'package:calculadora_imc/model/calculadora_model.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_login_page.dart';
@@ -30,8 +31,8 @@ class _ProfilePageState extends State<ProfilePage> {
   int _controllerID = 0;
 
   XFile? _image;
-  final String _imageNetwork =
-      'https://cdn-icons-png.flaticon.com/512/12631/12631691.png';
+  // final String _imageNetwork =
+  //     'https://cdn-icons-png.flaticon.com/512/12631/12631691.png';
 
   cropImage(XFile imageFile) async {
     // ignore: unused_local_variable
@@ -74,10 +75,23 @@ class _ProfilePageState extends State<ProfilePage> {
       id: list[0]['id'],
       nome: list[0]['nome'],
       idade: list[0]['idade'],
-      altura: double.parse(list[0]['altura']),
-      peso: double.parse(list[0]['peso']),
+      altura: list[0]['altura'],
+      peso: list[0]['peso'],
       sexo: list[0]['sexo'],
       foto: list[0]['foto'],
+    );
+
+    List<Map<String, dynamic>> listCalculadora =
+        await database.rawQuery('SELECT * FROM CALCULADORA');
+
+    CalculadoraIMCModel calculadoraIMCModel = CalculadoraIMCModel(
+      imc: listCalculadora[0]['seu_imc'],
+      peso: listCalculadora[0]['peso'] ?? 0,
+      altura: listCalculadora[0]['altura'],
+      id: listCalculadora[0]['id'],
+      nome: listCalculadora[0]['nome'],
+      sexo: listCalculadora[0]['sexo'],
+      foto: listCalculadora[0]['foto'],
     );
 
     _controllerID = pessoaModel.id;
@@ -93,7 +107,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     print(
         '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
-    print('------------------Lista------- $list');
+    print(
+        '------------------Calculadora IMC------- ${calculadoraIMCModel.toMap()}');
     setState(() {});
   }
 

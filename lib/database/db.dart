@@ -40,8 +40,8 @@ class DB {
       id INTEGER AUTO_INCREMENT PRIMARY KEY,
       nome TEXT,
       idade INTEGER,
-      peso TEXT,
-      altura TEXT,
+      peso DOUBLE,
+      altura DOUBLE,
       sexo TEXT,
       foto TEXT
     )
@@ -49,15 +49,17 @@ class DB {
 
   String get _calculadora => '''
     CREATE TABLE CALCULADORA (
+      id INTEGER PRIMARY KEY,
       nome TEXT,
       idade INTEGER,
-      peso TEXT,
-      altura TEXT,
-      seu_imc TEXT,
+      peso DOUBLE,
+      altura DOUBLE,
+      sexo TEXT,
+      seu_imc DOUBLE,
       classificacao TEXT,
       risco_comorbidade TEXT,
       foto TEXT,
-      FOREIGN KEY (nome, peso, altura) REFERENCES PESSOA (nome, peso, altura)
+      FOREIGN KEY (id, nome, peso, altura, sexo) REFERENCES PESSOA (id, nome, peso, altura, sexo)
   )
   ''';
 

@@ -25,6 +25,9 @@ class CalculadoraIMCModel extends PessoaModel {
   Map<String, dynamic> toMap() {
     return {
       'nome': nome,
+      'seu_imc': imc,
+      'peso': peso,
+      'sexo': sexo,
       'idade': idade,
       'altura': altura,
       'foto': foto,
