@@ -1,5 +1,5 @@
+import 'package:calculadora_imc/model/calculadora_model.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
-import 'package:calculadora_imc/repository/calculadora_model_repository.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -43,8 +43,8 @@ class DB {
       id INTEGER AUTO_INCREMENT PRIMARY KEY,
       nome TEXT,
       idade INTEGER,
-      peso TEXT,
-      altura TEXT,
+      peso DOUBLE,
+      altura DOUBLE,
       sexo TEXT,
       foto TEXT
     )
@@ -52,25 +52,29 @@ class DB {
 
   String get _calculadora => '''
     CREATE TABLE CALCULADORA (
+      id INTEGER PRIMARY KEY,
       nome TEXT,
-      seu_imc TEXT,
+      idade INTEGER,
+      peso DOUBLE,
+      altura DOUBLE,
+      sexo TEXT,
+      seu_imc DOUBLE,
       classificacao TEXT,
       risco_comorbidade TEXT,
-      peso TEXT,
-      altura TEXT,
-      FOREIGN KEY (nome, peso, altura) REFERENCES PESSOA (nome, peso, altura)
-    )
+      foto TEXT,
+      FOREIGN KEY (id, nome, peso, altura, sexo) REFERENCES PESSOA (id, nome, peso, altura, sexo)
+  )
   ''';
 
   // Inserir dados na tabela Pessoa
-  Future<int> openDataBase(PessoaModel pessoaModel) async {
+  Future<int> openTablePessoa(PessoaModel pessoaModel) async {
     Database database = await _initDatabase();
 
     return await database.insert('PESSOA', pessoaModel.toMap());
   }
 
   // Recuperar dados na tabela Pessoa
-  Future<PessoaModel> retriveDados() async {
+  Future<PessoaModel> retriveDadosPessoa() async {
     Database database = await _initDatabase();
     final List<Map<String, dynamic>> pessoaModel =
         await database.rawQuery('PESSOA');
@@ -85,26 +89,30 @@ class DB {
     );
   }
 
-  // Query from database
-  Future<List<Map<String, dynamic>>> query(String? fields, String? table, String? condition) async {
-    Database database = await _initDatabase();
-    List<Map<String, dynamic>> maps;
-    if(table == null) {
-      throw Exception('-------------------- Tabela não informada --------------------');
-    }
-    if(fields == null) {
-      maps = await database.rawQuery('SELECT * FROM $table');
-      return maps;
-    }
-    if(condition == null) {
-      maps = await database.rawQuery('SELECT $fields FROM $table');
-      return maps;
-    }
-    maps = await database.rawQuery('SELECT $fields FROM $table WHERE $condition');
-    return maps;
-  }
+// <<<<<<< gab3-dev
+//   // Query from database
+//   Future<List<Map<String, dynamic>>> query(String? fields, String? table, String? condition) async {
+//     Database database = await _initDatabase();
+//     List<Map<String, dynamic>> maps;
+//     if(table == null) {
+//       throw Exception('-------------------- Tabela não informada --------------------');
+//     }
+//     if(fields == null) {
+//       maps = await database.rawQuery('SELECT * FROM $table');
+//       return maps;
+//     }
+//     if(condition == null) {
+//       maps = await database.rawQuery('SELECT $fields FROM $table');
+//       return maps;
+//     }
+//     maps = await database.rawQuery('SELECT $fields FROM $table WHERE $condition');
+//     return maps;
+//   }
 
-  // Uptade de dados na tabela Pessoa
+//   // Uptade de dados na tabela Pessoa
+// =======
+//   // Update de dados na tabela Pessoa
+// >>>>>>> main
   Future<void> updatePessoa(PessoaModel pessoaModel) async {
     Database database = await _initDatabase();
     await database.update(
@@ -126,28 +134,26 @@ class DB {
   }
 
   // Inserir dados na tabela Calculadora
-  Future<CalculadoraIMC> insertCalculadoraIMC(
-      CalculadoraIMC calculadoraIMC) async {
+  Future<int> openTableCalculadora(
+      CalculadoraIMCModel calculadraIMCModel) async {
     Database database = await _initDatabase();
 
-    final List<Map<String, dynamic>> calculadoraIMC =
-        await database.rawQuery('CALCULADORA');
-    return CalculadoraIMC();
+    return await database.insert('CALCULADORA', calculadraIMCModel.toMap());
   }
 
-  // Recuperar dados na tabela Calculadora
-  Future<PessoaModel> retriveDadosCalculadora() async {
+  // Recuperar dados na tabela calculadora
+  Future<CalculadoraIMCModel> retriveDadosCalculadora() async {
     Database database = await _initDatabase();
-    final List<Map<String, dynamic>> pessoaModel =
-        await database.rawQuery('CALCULADORA');
-    return PessoaModel(
-      id: pessoaModel[0]['id'],
-      nome: pessoaModel[0]['nome'],
-      idade: pessoaModel[0]['idade'],
-      altura: pessoaModel[0]['altura'],
-      peso: pessoaModel[0]['peso'],
-      sexo: pessoaModel[0]['sexo'],
-      foto: pessoaModel[0]['foto'],
+    final List<Map<String, dynamic>> calculadoraIMCModel =
+        await database.rawQuery('SELECT * FROM CALCULADORA');
+    return CalculadoraIMCModel(
+      imc: calculadoraIMCModel[0]['seu_imc'],
+      peso: calculadoraIMCModel[0]['peso'],
+      altura: calculadoraIMCModel[0]['altura'],
+      id: calculadoraIMCModel[0]['id'],
+      nome: '',
+      sexo: '',
+      foto: '',
     );
   }
 }

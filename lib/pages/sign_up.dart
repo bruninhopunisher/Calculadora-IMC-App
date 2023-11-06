@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:calculadora_imc/database/db.dart';
+import 'package:calculadora_imc/model/calculadora_model.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_page.dart';
@@ -479,7 +480,21 @@ class _SignUPPageState extends State<SignUPPage> {
                                 foto: _image?.path ?? '',
                               );
 
-                              await DB.instance.openDataBase(pessoaModelLogin);
+                              CalculadoraIMCModel calculadoraIMCModel =
+                                  CalculadoraIMCModel(
+                                imc: 0,
+                                peso: 0,
+                                altura: 0,
+                                id: 0,
+                                nome: '',
+                                sexo: '',
+                                foto: '',
+                              );
+
+                              await DB.instance
+                                  .openTablePessoa(pessoaModelLogin);
+                              await DB.instance
+                                  .openTableCalculadora(calculadoraIMCModel);
 
                               await Future.delayed(
                                 const Duration(seconds: 2),

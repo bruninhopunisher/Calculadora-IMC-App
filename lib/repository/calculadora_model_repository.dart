@@ -11,31 +11,35 @@ class CalculadoraIMC {
 
   _getDadosCalculadora() async {
     Database database = await DB.instance.database;
-    List<Map<String, dynamic>> list =
+    List<Map<String, dynamic>> _list =
         await database.rawQuery('SELECT * FROM CALCULADORA');
 
-    CalculadraIMCModel calculadoraIMCModel = CalculadraIMCModel(
-      imc: list[0]['seu_imc'],
-      peso: list[0]['peso'],
-      altura: list[0]['altura'],
-      id: 0,
-      nome: '',
-      idade: 0,
-      sexo: '',
-      foto: '',
+    CalculadoraIMCModel _calculadoraIMCModel = CalculadoraIMCModel(
+      imc: _list[0]['seu_imc'],
+      peso: _list[0]['peso'],
+      altura: _list[0]['altura'],
+      id: _list[0]['id'],
+      nome: _list[0]['nome'],
+      sexo: _list[0]['sexo'],
+      foto: _list[0]['foto'],
     );
+
+    peso = _calculadoraIMCModel.peso;
+    altura = _calculadoraIMCModel.altura;
+    _imc = _calculadoraIMCModel.imc;
   }
 
   Future<double> _imcCalculator() async {
-    List dados = await _getDadosCalculadora();
-    peso = dados[1];
-    altura = dados[2];
+    List list = await _getDadosCalculadora();
+    peso = list[1];
+    altura = list[2];
     _imc = peso / (altura * altura);
     return _imc;
   }
 
   Future<String> classificacaoIMC() async {
     double imc = await _imcCalculator();
+
     if (imc < 18.5) {
       _classificacao = 'Abaixo do peso \n Baixo';
     } else if (imc >= 18.5 && imc <= 24.9) {
@@ -53,5 +57,20 @@ class CalculadoraIMC {
 
   Future<void> inserirDatabase() async {
     Database database = await DB.instance.database;
+
+    List<String> spliteClassificacao = _classificacao.split('\n');
+    _classificacao = spliteClassificacao[0];
+
+    await database.insert(
+      'CALCULADORA',
+      {
+        'nome': '',
+        'seu_imc': _imc,
+        'classificacao': _classificacao,
+        'risco_comorbidade': _riscoComorbidade,
+        'peso': peso,
+        'altura': altura,
+      },
+    );
   }
 }
