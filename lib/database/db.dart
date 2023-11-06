@@ -7,6 +7,9 @@ class DB {
   // Construtor com acesso privado
   DB._();
 
+  // Construtor para uso publico dos métodos
+  DB();
+
   // Instância única de DB
   static final DB instance = DB._();
 
@@ -86,7 +89,30 @@ class DB {
     );
   }
 
-  // Update de dados na tabela Pessoa
+// <<<<<<< gab3-dev
+//   // Query from database
+//   Future<List<Map<String, dynamic>>> query(String? fields, String? table, String? condition) async {
+//     Database database = await _initDatabase();
+//     List<Map<String, dynamic>> maps;
+//     if(table == null) {
+//       throw Exception('-------------------- Tabela não informada --------------------');
+//     }
+//     if(fields == null) {
+//       maps = await database.rawQuery('SELECT * FROM $table');
+//       return maps;
+//     }
+//     if(condition == null) {
+//       maps = await database.rawQuery('SELECT $fields FROM $table');
+//       return maps;
+//     }
+//     maps = await database.rawQuery('SELECT $fields FROM $table WHERE $condition');
+//     return maps;
+//   }
+
+//   // Uptade de dados na tabela Pessoa
+// =======
+//   // Update de dados na tabela Pessoa
+// >>>>>>> main
   Future<void> updatePessoa(PessoaModel pessoaModel) async {
     Database database = await _initDatabase();
     await database.update(
