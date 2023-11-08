@@ -5,6 +5,7 @@ import 'package:calculadora_imc/model/calculadora_model.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_login_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -86,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
         await database.rawQuery('SELECT * FROM CALCULADORA');
 
     CalculadoraIMCModel calculadoraIMCModel = CalculadoraIMCModel(
-      imc: listCalculadora[0]['imc'],
+      imc: listCalculadora[0]['imc'] ?? 0,
       peso: listCalculadora[0]['peso'] ?? 0,
       altura: listCalculadora[0]['altura'],
       email: listCalculadora[0]['email'],
@@ -106,10 +107,14 @@ class _ProfilePageState extends State<ProfilePage> {
           pessoaModel.foto,
         );
 
-    print(
-        '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
-    print(
-        '------------------Calculadora IMC------- ${calculadoraIMCModel.toMap()}');
+    if (kDebugMode) {
+      print(
+          '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
+    }
+    if (kDebugMode) {
+      print(
+          '------------------Calculadora IMC------- ${calculadoraIMCModel.toMap()}');
+    }
     setState(() {});
   }
 
@@ -195,11 +200,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   basename(_image!.path);
                                               await _image!
                                                   .saveTo("$path/$name");
+                                              // ignore: use_build_context_synchronously
                                               Navigator.pop(context);
 
                                               cropImage(_image!);
-                                              print(
-                                                  'Camera---------- ${_image.toString()}');
+                                              if (kDebugMode) {
+                                                print(
+                                                    'Camera---------- ${_image.toString()}');
+                                              }
                                             }
                                           },
                                         ),
@@ -429,8 +437,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 onChanged: (value) {
                                   setState(() {
                                     _controllerSexo = 'Masculino';
-                                    print(
-                                        '---------RADIO------------------------ ${_controllerSexo.toString()}');
+                                    if (kDebugMode) {
+                                      print(
+                                          '---------RADIO------------------------ ${_controllerSexo.toString()}');
+                                    }
                                   });
                                 },
                               ),
@@ -452,8 +462,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                   setState(
                                     () {
                                       _controllerSexo = 'Feminino';
-                                      print(
-                                          '---------RADIO------------------------ $_controllerSexo');
+                                      if (kDebugMode) {
+                                        print(
+                                            '---------RADIO------------------------ $_controllerSexo');
+                                      }
                                     },
                                   );
                                 },
@@ -586,8 +598,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 );
 
                                 await DB.instance.updatePessoa(pessoaModel);
-                                print(
-                                    '----------------------------updated: ${pessoaModel.toMap()}');
+                                if (kDebugMode) {
+                                  print(
+                                      '----------------------------updated: ${pessoaModel.toMap()}');
+                                }
+                                // ignore: use_build_context_synchronously
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: const Text(

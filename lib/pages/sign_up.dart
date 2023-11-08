@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:calculadora_imc/database/db.dart';
-import 'package:calculadora_imc/model/calculadora_model.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -129,11 +129,14 @@ class _SignUPPageState extends State<SignUPPage> {
                                             String name =
                                                 basename(_image!.path);
                                             await _image!.saveTo("$path/$name");
+                                            // ignore: use_build_context_synchronously
                                             Navigator.pop(context);
 
                                             cropImage(_image!);
-                                            print(
-                                                'Camera---------- ${_image.toString()}');
+                                            if (kDebugMode) {
+                                              print(
+                                                  'Camera---------- ${_image.toString()}');
+                                            }
                                           }
                                         },
                                       ),
@@ -364,7 +367,9 @@ class _SignUPPageState extends State<SignUPPage> {
                                 setState(() {
                                   _value = value.toString();
                                   _controllerSexo.text = _value;
-                                  print(_controllerSexo.text);
+                                  if (kDebugMode) {
+                                    print(_controllerSexo.text);
+                                  }
                                 });
                               },
                             ),
@@ -386,7 +391,9 @@ class _SignUPPageState extends State<SignUPPage> {
                                 setState(() {
                                   _value = value.toString();
                                   _controllerSexo.text = _value;
-                                  print(_controllerSexo.text);
+                                  if (kDebugMode) {
+                                    print(_controllerSexo.text);
+                                  }
                                 });
                               },
                             ),

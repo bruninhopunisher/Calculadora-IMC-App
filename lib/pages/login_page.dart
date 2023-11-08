@@ -3,6 +3,7 @@ import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_page.dart';
 import 'package:calculadora_imc/utils/terms_text.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -41,10 +42,14 @@ class _LoginPageState extends State<LoginPage> {
         sexo: list[0]['sexo'],
         foto: list[0]['foto'],
       );
-      print(
-          '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
+      if (kDebugMode) {
+        print(
+            '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
+      }
       _controllerEnter = true;
-      print('------------------ControllerId------- $_controllerID');
+      if (kDebugMode) {
+        print('------------------ControllerId------- $_controllerID');
+      }
     }
     //  else if (listCalculadora.isNotEmpty) {
     //   CalculadoraIMCModel calculadoraIMCModel = CalculadoraIMCModel(

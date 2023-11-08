@@ -1,5 +1,6 @@
 import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/utils/colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sqflite/sqflite.dart';
@@ -18,8 +19,10 @@ class _HomePageState extends State<HomePage> {
     List<Map<String, dynamic>> _list =
         await database.rawQuery('SELECT * FROM CALCULADORA');
 
-    print(
-        '--------------Calculadora Model ----------------- ${_list.toList()}');
+    if (kDebugMode) {
+      print(
+          '--------------Calculadora Model ----------------- ${_list.toList()}');
+    }
   }
 
   @override

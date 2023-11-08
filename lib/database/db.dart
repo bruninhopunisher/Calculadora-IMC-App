@@ -36,6 +36,7 @@ class DB {
   _onCreate(db, versao) async {
     await db.execute(_pessoa);
     await db.execute(_calculadora);
+    await db.execute(_triggerAfterInsert);
   }
 
   _onConfigure(Database db) async {
@@ -68,7 +69,18 @@ class DB {
       risco_comorbidade TEXT,
       foto TEXT,
       FOREIGN KEY(email) REFERENCES PESSOA(email)
-  )
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+    )
+  ''';
+
+  String get _triggerAfterInsert => '''
+    CREATE TRIGGER after_insert_pessoa
+    AFTER INSERT ON PESSOA
+    BEGIN
+      INSERT INTO CALCULADORA (email, nome, idade, peso, altura, sexo, foto)
+      VALUES (NEW.email, NEW.nome, NEW.idade, NEW.peso, NEW.altura, NEW.sexo, NEW.foto);
+    END;
   ''';
 
   // Inserir dados na tabela Pessoa
