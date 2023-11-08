@@ -23,12 +23,13 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final ImagePicker _picker = ImagePicker();
 
+  final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerNome = TextEditingController();
   final TextEditingController _controllerIdade = TextEditingController();
   final TextEditingController _controllerAltura = TextEditingController();
   final TextEditingController _controllerPeso = TextEditingController();
   String _controllerSexo = '';
-  int _controllerID = 0;
+  String _controllerID = '';
 
   XFile? _image;
   // final String _imageNetwork =
@@ -72,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
     List<Map<String, dynamic>> list =
         await database.rawQuery('SELECT * FROM PESSOA');
     PessoaModel pessoaModel = PessoaModel(
-      id: list[0]['id'],
+      email: list[0]['email'],
       nome: list[0]['nome'],
       idade: list[0]['idade'],
       altura: list[0]['altura'],
@@ -85,16 +86,16 @@ class _ProfilePageState extends State<ProfilePage> {
         await database.rawQuery('SELECT * FROM CALCULADORA');
 
     CalculadoraIMCModel calculadoraIMCModel = CalculadoraIMCModel(
-      imc: listCalculadora[0]['seu_imc'],
+      imc: listCalculadora[0]['imc'],
       peso: listCalculadora[0]['peso'] ?? 0,
       altura: listCalculadora[0]['altura'],
-      id: listCalculadora[0]['id'],
+      email: listCalculadora[0]['email'],
       nome: listCalculadora[0]['nome'],
       sexo: listCalculadora[0]['sexo'],
       foto: listCalculadora[0]['foto'],
     );
 
-    _controllerID = pessoaModel.id;
+    _controllerEmail.text = pessoaModel.email;
     _controllerNome.text = pessoaModel.nome;
     _controllerIdade.text = pessoaModel.idade.toString();
     _controllerAltura.text = pessoaModel.altura.toString();
@@ -251,6 +252,37 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                     radius: 50,
                                   ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 25, right: 25, bottom: 20),
+                          child: TextField(
+                            textInputAction: TextInputAction.next,
+                            controller: _controllerEmail,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              labelStyle: const TextStyle(
+                                color: fontColorCard,
+                                fontSize: 20,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: fontColorCard,
+                                  width: 3,
+                                ),
+                              ),
+                            ),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: backGroundColor,
+                              wordSpacing: 5,
+                            ),
                           ),
                         ),
                         Padding(
@@ -544,7 +576,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 return;
                               } else {
                                 PessoaModel pessoaModel = PessoaModel(
-                                  id: _controllerID,
+                                  email: _controllerEmail.text.trim(),
                                   nome: _controllerNome.text.trim(),
                                   idade: int.parse(_controllerIdade.text),
                                   altura: double.parse(_controllerAltura.text),

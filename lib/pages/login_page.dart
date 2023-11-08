@@ -33,11 +33,11 @@ class _LoginPageState extends State<LoginPage> {
     //     await database.rawQuery('SELECT * FROM CALCULADORA');
     if (list.isNotEmpty) {
       PessoaModel pessoaModel = PessoaModel(
-        id: list[0]['id'],
+        email: list[0]['email'],
         nome: list[0]['nome'],
         idade: list[0]['idade'],
-        altura: double.parse(list[0]['altura']),
-        peso: double.parse(list[0]['peso']),
+        altura: list[0]['altura'],
+        peso: list[0]['peso'],
         sexo: list[0]['sexo'],
         foto: list[0]['foto'],
       );

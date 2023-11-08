@@ -25,6 +25,7 @@ class _SignUPPageState extends State<SignUPPage> {
 
   XFile? _image;
 
+  final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerNome = TextEditingController();
   final TextEditingController _controllerIdade = TextEditingController();
   final TextEditingController _controllerAltura = TextEditingController();
@@ -188,6 +189,37 @@ class _SignUPPageState extends State<SignUPPage> {
                                   ),
                                   radius: 50,
                                 ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 25, right: 25, bottom: 20),
+                        child: TextField(
+                          textInputAction: TextInputAction.next,
+                          controller: _controllerEmail,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            labelStyle: const TextStyle(
+                              color: fontColorCard,
+                              fontSize: 20,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: fontColorCard,
+                                width: 3,
+                              ),
+                            ),
+                          ),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: backGroundColor,
+                            wordSpacing: 5,
+                          ),
                         ),
                       ),
                       Padding(
@@ -471,7 +503,7 @@ class _SignUPPageState extends State<SignUPPage> {
                               return;
                             } else {
                               PessoaModel pessoaModelLogin = PessoaModel(
-                                id: 0,
+                                email: _controllerEmail.text,
                                 nome: _controllerNome.text,
                                 idade: int.parse(_controllerIdade.text),
                                 altura: double.parse(_controllerAltura.text),
@@ -480,21 +512,8 @@ class _SignUPPageState extends State<SignUPPage> {
                                 foto: _image?.path ?? '',
                               );
 
-                              CalculadoraIMCModel calculadoraIMCModel =
-                                  CalculadoraIMCModel(
-                                imc: 0,
-                                peso: 0,
-                                altura: 0,
-                                id: 0,
-                                nome: '',
-                                sexo: '',
-                                foto: '',
-                              );
-
                               await DB.instance
                                   .openTablePessoa(pessoaModelLogin);
-                              await DB.instance
-                                  .openTableCalculadora(calculadoraIMCModel);
 
                               await Future.delayed(
                                 const Duration(seconds: 2),
