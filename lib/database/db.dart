@@ -37,6 +37,7 @@ class DB {
     await db.execute(_pessoa);
     await db.execute(_calculadora);
     await db.execute(_triggerAfterInsert);
+    await db.execute(_triggerAfterUpdatePessoa); // Adicione esta linha
   }
 
   _onConfigure(Database db) async {
@@ -82,6 +83,22 @@ class DB {
       VALUES (NEW.email, NEW.nome, NEW.idade, NEW.peso, NEW.altura, NEW.sexo, NEW.foto);
     END;
   ''';
+
+  String get _triggerAfterUpdatePessoa => '''
+  CREATE TRIGGER after_update_pessoa
+    AFTER UPDATE ON PESSOA
+    BEGIN
+      UPDATE CALCULADORA
+      SET 
+        nome = NEW.nome,
+        idade = NEW.idade,
+        peso = NEW.peso,
+        altura = NEW.altura,
+        sexo = NEW.sexo,
+        foto = NEW.foto
+      WHERE email = NEW.email;
+    END;
+''';
 
   // Inserir dados na tabela Pessoa
   Future<int> openTablePessoa(PessoaModel pessoaModel) async {
@@ -149,6 +166,16 @@ class DB {
     );
   }
 
+  // Deletar dados na tabela calculadora
+  Future<void> deleteCalculadora(String calculadoraIMCModel) async {
+    Database database = await _initDatabase();
+    await database.delete(
+      'PESSOA',
+      where: 'email = ?',
+      whereArgs: [calculadoraIMCModel],
+    );
+  }
+
   // Inserir dados na tabela Calculadora
   Future<int> openTableCalculadora(
       CalculadoraIMCModel calculadoraIMCModel) async {
@@ -158,18 +185,12 @@ class DB {
   }
 
   // Recuperar dados na tabela calculadora
-  Future<CalculadoraIMCModel> retriveDadosCalculadora() async {
+  Future<List<Map<String, dynamic>>> retrieveDataFromCalculadora() async {
     Database database = await _initDatabase();
-    final List<Map<String, dynamic>> calculadoraIMCModel =
-        await database.rawQuery('SELECT * FROM CALCULADORA');
-    return CalculadoraIMCModel(
-      imc: calculadoraIMCModel[0]['imc'],
-      peso: calculadoraIMCModel[0]['peso'],
-      altura: calculadoraIMCModel[0]['altura'],
-      email: calculadoraIMCModel[0]['email'],
-      nome: '',
-      sexo: '',
-      foto: '',
-    );
+    return await database.rawQuery('''
+    SELECT CALCULADORA.*, PESSOA.nome AS pessoa_nome
+    FROM CALCULADORA
+    JOIN PESSOA ON CALCULADORA.email = PESSOA.email
+  ''');
   }
 }

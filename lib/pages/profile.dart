@@ -90,11 +90,13 @@ class _ProfilePageState extends State<ProfilePage> {
       imc: listCalculadora[0]['imc'] ?? 0,
       peso: listCalculadora[0]['peso'] ?? 0,
       altura: listCalculadora[0]['altura'],
-      email: listCalculadora[0]['email'],
       nome: listCalculadora[0]['nome'],
+      email: listCalculadora[0]['email'],
       sexo: listCalculadora[0]['sexo'],
       foto: listCalculadora[0]['foto'],
     );
+
+    calculadoraIMCModel.email;
 
     _controllerEmail.text = pessoaModel.email;
     _controllerNome.text = pessoaModel.nome;
@@ -113,7 +115,12 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     if (kDebugMode) {
       print(
-          '------------------Calculadora IMC------- ${calculadoraIMCModel.toMap()}');
+          '------------------Calculadora IMC Atualizada------- ${calculadoraIMCModel.toMap()}');
+    }
+
+    if (kDebugMode) {
+      print(
+          '------------------Calculadora IMC Novo------- ${calculadoraIMCModel.toMap()}');
     }
     setState(() {});
   }
@@ -266,11 +273,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           padding: const EdgeInsets.only(
                               left: 25, right: 25, bottom: 20),
                           child: TextField(
-                            textInputAction: TextInputAction.next,
                             controller: _controllerEmail,
-                            keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               labelText: 'Email',
+                              enabled: false,
                               labelStyle: const TextStyle(
                                 color: fontColorCard,
                                 fontSize: 20,
@@ -652,64 +658,66 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: () async {
                               FocusManager.instance.primaryFocus?.unfocus();
                               showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      backgroundColor: cardColor,
-                                      title: const Text(
-                                        'Excluir Conta',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: backGroundColor,
-                                        ),
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    backgroundColor: cardColor,
+                                    title: const Text(
+                                      'Excluir Conta',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: backGroundColor,
                                       ),
-                                      content: const Text(
-                                        'Deseja realmente excluir sua conta? Isso implicara em perder todos os dados salvos!',
-                                        style: TextStyle(
-                                          color: backGroundColor,
-                                        ),
-                                        textAlign: TextAlign.justify,
+                                    ),
+                                    content: const Text(
+                                      'Deseja realmente excluir sua conta? Isso implicara em perder todos os dados salvos!',
+                                      style: TextStyle(
+                                        color: backGroundColor,
                                       ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text(
-                                            'Não',
-                                            style: TextStyle(
-                                              color: backGroundColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                      textAlign: TextAlign.justify,
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                          'Não',
+                                          style: TextStyle(
+                                            color: backGroundColor,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            await DB.instance
-                                                .deletePessoa(_controllerID);
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          await DB.instance.deletePessoa(
+                                              _controllerEmail.text.trim());
 
-                                            await Future.delayed(
-                                                const Duration(seconds: 2));
-                                            // ignore: use_build_context_synchronously
-                                            Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const NavigatorLoginPage(),
-                                              ),
-                                            );
-                                          },
-                                          child: const Text(
-                                            'Sim',
-                                            style: TextStyle(
-                                              color: backGroundColor,
-                                              fontWeight: FontWeight.bold,
+                                          await Future.delayed(
+                                            const Duration(seconds: 2),
+                                          );
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const NavigatorLoginPage(),
                                             ),
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Sim',
+                                          style: TextStyle(
+                                            color: backGroundColor,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      ],
-                                    );
-                                  });
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             },
                             style: ButtonStyle(
                               elevation: MaterialStateProperty.all(20),

@@ -412,8 +412,27 @@ class _SignUPPageState extends State<SignUPPage> {
                         child: ElevatedButton(
                           onPressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
-
-                            if (_controllerNome.text.trim().isEmpty) {
+                            if (_controllerEmail.text.trim().isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text(
+                                    'Digite um valor válido para o nome!',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      color: cardColor,
+                                    ),
+                                  ),
+                                  duration: const Duration(milliseconds: 2000),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                              );
+                              return;
+                            } else if (_controllerNome.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text(
@@ -510,7 +529,7 @@ class _SignUPPageState extends State<SignUPPage> {
                               return;
                             } else {
                               PessoaModel pessoaModelLogin = PessoaModel(
-                                email: _controllerEmail.text,
+                                email: _controllerEmail.text.toLowerCase(),
                                 nome: _controllerNome.text,
                                 idade: int.parse(_controllerIdade.text),
                                 altura: double.parse(_controllerAltura.text),
