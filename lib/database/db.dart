@@ -28,6 +28,7 @@ class DB {
       join(await getDatabasesPath(), 'calculadora_imc.db'),
       version: 1,
       onCreate: _onCreate,
+      onConfigure: _onConfigure,
     );
   }
 
@@ -35,12 +36,18 @@ class DB {
   _onCreate(db, versao) async {
     await db.execute(_pessoa);
     await db.execute(_calculadora);
+    await db.execute(_triggerAfterInsert);
+    await db.execute(_triggerAfterUpdatePessoa); // Adicione esta linha
+  }
+
+  _onConfigure(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON;');
   }
 
   // Criação das estruturas das tabelas
   String get _pessoa => '''
     CREATE TABLE PESSOA (
-      id INTEGER AUTO_INCREMENT PRIMARY KEY,
+      email TEXT PRIMARY KEY UNIQUE,
       nome TEXT,
       idade INTEGER,
       peso DOUBLE,
@@ -52,24 +59,50 @@ class DB {
 
   String get _calculadora => '''
     CREATE TABLE CALCULADORA (
-      id INTEGER PRIMARY KEY,
+      email TEXT PRIMARY KEY UNIQUE,
       nome TEXT,
       idade INTEGER,
       peso DOUBLE,
       altura DOUBLE,
       sexo TEXT,
-      seu_imc DOUBLE,
+      imc DOUBLE,
       classificacao TEXT,
       risco_comorbidade TEXT,
       foto TEXT,
-      FOREIGN KEY (id, nome, peso, altura, sexo) REFERENCES PESSOA (id, nome, peso, altura, sexo)
-  )
+      FOREIGN KEY(email) REFERENCES PESSOA(email)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+    )
   ''';
+
+  String get _triggerAfterInsert => '''
+    CREATE TRIGGER after_insert_pessoa
+    AFTER INSERT ON PESSOA
+    BEGIN
+      INSERT INTO CALCULADORA (email, nome, idade, peso, altura, sexo, foto)
+      VALUES (NEW.email, NEW.nome, NEW.idade, NEW.peso, NEW.altura, NEW.sexo, NEW.foto);
+    END;
+  ''';
+
+  String get _triggerAfterUpdatePessoa => '''
+  CREATE TRIGGER after_update_pessoa
+    AFTER UPDATE ON PESSOA
+    BEGIN
+      UPDATE CALCULADORA
+      SET 
+        nome = NEW.nome,
+        idade = NEW.idade,
+        peso = NEW.peso,
+        altura = NEW.altura,
+        sexo = NEW.sexo,
+        foto = NEW.foto
+      WHERE email = NEW.email;
+    END;
+''';
 
   // Inserir dados na tabela Pessoa
   Future<int> openTablePessoa(PessoaModel pessoaModel) async {
     Database database = await _initDatabase();
-
     return await database.insert('PESSOA', pessoaModel.toMap());
   }
 
@@ -79,7 +112,7 @@ class DB {
     final List<Map<String, dynamic>> pessoaModel =
         await database.rawQuery('PESSOA');
     return PessoaModel(
-      id: pessoaModel[0]['id'],
+      email: pessoaModel[0]['email'],
       nome: pessoaModel[0]['nome'],
       idade: pessoaModel[0]['idade'],
       altura: pessoaModel[0]['altura'],
@@ -118,42 +151,46 @@ class DB {
     await database.update(
       'PESSOA',
       pessoaModel.toMap(),
-      where: 'id = ?',
-      whereArgs: [pessoaModel.id],
+      where: 'email = ?',
+      whereArgs: [pessoaModel.email],
     );
   }
 
   // Deletar dados na tabela Pessoa
-  Future<void> deletePessoa(int id) async {
+  Future<void> deletePessoa(String pessoaModel) async {
     Database database = await _initDatabase();
     await database.delete(
       'PESSOA',
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'email = ?',
+      whereArgs: [pessoaModel],
+    );
+  }
+
+  // Deletar dados na tabela calculadora
+  Future<void> deleteCalculadora(String calculadoraIMCModel) async {
+    Database database = await _initDatabase();
+    await database.delete(
+      'PESSOA',
+      where: 'email = ?',
+      whereArgs: [calculadoraIMCModel],
     );
   }
 
   // Inserir dados na tabela Calculadora
   Future<int> openTableCalculadora(
-      CalculadoraIMCModel calculadraIMCModel) async {
+      CalculadoraIMCModel calculadoraIMCModel) async {
     Database database = await _initDatabase();
-
-    return await database.insert('CALCULADORA', calculadraIMCModel.toMap());
+    await database.execute('PRAGMA foreign_keys = ON;');
+    return await database.insert('CALCULADORA', calculadoraIMCModel.toMap());
   }
 
   // Recuperar dados na tabela calculadora
-  Future<CalculadoraIMCModel> retriveDadosCalculadora() async {
+  Future<List<Map<String, dynamic>>> retrieveDataFromCalculadora() async {
     Database database = await _initDatabase();
-    final List<Map<String, dynamic>> calculadoraIMCModel =
-        await database.rawQuery('SELECT * FROM CALCULADORA');
-    return CalculadoraIMCModel(
-      imc: calculadoraIMCModel[0]['seu_imc'],
-      peso: calculadoraIMCModel[0]['peso'],
-      altura: calculadoraIMCModel[0]['altura'],
-      id: calculadoraIMCModel[0]['id'],
-      nome: '',
-      sexo: '',
-      foto: '',
-    );
+    return await database.rawQuery('''
+    SELECT CALCULADORA.*, PESSOA.nome AS pessoa_nome
+    FROM CALCULADORA
+    JOIN PESSOA ON CALCULADORA.email = PESSOA.email
+  ''');
   }
 }

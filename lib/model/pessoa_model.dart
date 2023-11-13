@@ -1,5 +1,5 @@
 class PessoaModel {
-  final int id;
+  final String email;
   final String nome;
   final int idade;
   final double altura;
@@ -8,7 +8,7 @@ class PessoaModel {
   final String foto;
 
   PessoaModel({
-    required this.id,
+    required this.email,
     required this.nome,
     required this.idade,
     required this.altura,
@@ -19,7 +19,7 @@ class PessoaModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'email': email,
       'nome': nome,
       'idade': idade,
       'altura': altura,

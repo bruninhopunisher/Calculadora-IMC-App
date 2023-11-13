@@ -5,6 +5,7 @@ import 'package:calculadora_imc/model/calculadora_model.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_login_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -23,12 +24,13 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final ImagePicker _picker = ImagePicker();
 
+  final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerNome = TextEditingController();
   final TextEditingController _controllerIdade = TextEditingController();
   final TextEditingController _controllerAltura = TextEditingController();
   final TextEditingController _controllerPeso = TextEditingController();
   String _controllerSexo = '';
-  int _controllerID = 0;
+  String _controllerID = '';
 
   XFile? _image;
   // final String _imageNetwork =
@@ -72,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
     List<Map<String, dynamic>> list =
         await database.rawQuery('SELECT * FROM PESSOA');
     PessoaModel pessoaModel = PessoaModel(
-      id: list[0]['id'],
+      email: list[0]['email'],
       nome: list[0]['nome'],
       idade: list[0]['idade'],
       altura: list[0]['altura'],
@@ -85,16 +87,18 @@ class _ProfilePageState extends State<ProfilePage> {
         await database.rawQuery('SELECT * FROM CALCULADORA');
 
     CalculadoraIMCModel calculadoraIMCModel = CalculadoraIMCModel(
-      imc: listCalculadora[0]['seu_imc'],
+      imc: listCalculadora[0]['imc'] ?? 0,
       peso: listCalculadora[0]['peso'] ?? 0,
       altura: listCalculadora[0]['altura'],
-      id: listCalculadora[0]['id'],
       nome: listCalculadora[0]['nome'],
+      email: listCalculadora[0]['email'],
       sexo: listCalculadora[0]['sexo'],
       foto: listCalculadora[0]['foto'],
     );
 
-    _controllerID = pessoaModel.id;
+    calculadoraIMCModel.email;
+
+    _controllerEmail.text = pessoaModel.email;
     _controllerNome.text = pessoaModel.nome;
     _controllerIdade.text = pessoaModel.idade.toString();
     _controllerAltura.text = pessoaModel.altura.toString();
@@ -105,10 +109,19 @@ class _ProfilePageState extends State<ProfilePage> {
           pessoaModel.foto,
         );
 
-    print(
-        '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
-    print(
-        '------------------Calculadora IMC------- ${calculadoraIMCModel.toMap()}');
+    if (kDebugMode) {
+      print(
+          '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
+    }
+    if (kDebugMode) {
+      print(
+          '------------------Calculadora IMC Atualizada------- ${calculadoraIMCModel.toMap()}');
+    }
+
+    if (kDebugMode) {
+      print(
+          '------------------Calculadora IMC Novo------- ${calculadoraIMCModel.toMap()}');
+    }
     setState(() {});
   }
 
@@ -194,11 +207,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   basename(_image!.path);
                                               await _image!
                                                   .saveTo("$path/$name");
+                                              // ignore: use_build_context_synchronously
                                               Navigator.pop(context);
 
                                               cropImage(_image!);
-                                              print(
-                                                  'Camera---------- ${_image.toString()}');
+                                              if (kDebugMode) {
+                                                print(
+                                                    'Camera---------- ${_image.toString()}');
+                                              }
                                             }
                                           },
                                         ),
@@ -251,6 +267,36 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                     radius: 50,
                                   ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 25, right: 25, bottom: 20),
+                          child: TextField(
+                            controller: _controllerEmail,
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              enabled: false,
+                              labelStyle: const TextStyle(
+                                color: fontColorCard,
+                                fontSize: 20,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: fontColorCard,
+                                  width: 3,
+                                ),
+                              ),
+                            ),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: backGroundColor,
+                              wordSpacing: 5,
+                            ),
                           ),
                         ),
                         Padding(
@@ -397,8 +443,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 onChanged: (value) {
                                   setState(() {
                                     _controllerSexo = 'Masculino';
-                                    print(
-                                        '---------RADIO------------------------ ${_controllerSexo.toString()}');
+                                    if (kDebugMode) {
+                                      print(
+                                          '---------RADIO------------------------ ${_controllerSexo.toString()}');
+                                    }
                                   });
                                 },
                               ),
@@ -420,8 +468,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                   setState(
                                     () {
                                       _controllerSexo = 'Feminino';
-                                      print(
-                                          '---------RADIO------------------------ $_controllerSexo');
+                                      if (kDebugMode) {
+                                        print(
+                                            '---------RADIO------------------------ $_controllerSexo');
+                                      }
                                     },
                                   );
                                 },
@@ -544,7 +594,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 return;
                               } else {
                                 PessoaModel pessoaModel = PessoaModel(
-                                  id: _controllerID,
+                                  email: _controllerEmail.text.trim(),
                                   nome: _controllerNome.text.trim(),
                                   idade: int.parse(_controllerIdade.text),
                                   altura: double.parse(_controllerAltura.text),
@@ -554,8 +604,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 );
 
                                 await DB.instance.updatePessoa(pessoaModel);
-                                print(
-                                    '----------------------------updated: ${pessoaModel.toMap()}');
+                                if (kDebugMode) {
+                                  print(
+                                      '----------------------------updated: ${pessoaModel.toMap()}');
+                                }
+                                // ignore: use_build_context_synchronously
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: const Text(
@@ -605,64 +658,66 @@ class _ProfilePageState extends State<ProfilePage> {
                             onPressed: () async {
                               FocusManager.instance.primaryFocus?.unfocus();
                               showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      backgroundColor: cardColor,
-                                      title: const Text(
-                                        'Excluir Conta',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: backGroundColor,
-                                        ),
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    backgroundColor: cardColor,
+                                    title: const Text(
+                                      'Excluir Conta',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: backGroundColor,
                                       ),
-                                      content: const Text(
-                                        'Deseja realmente excluir sua conta? Isso implicara em perder todos os dados salvos!',
-                                        style: TextStyle(
-                                          color: backGroundColor,
-                                        ),
-                                        textAlign: TextAlign.justify,
+                                    ),
+                                    content: const Text(
+                                      'Deseja realmente excluir sua conta? Isso implicara em perder todos os dados salvos!',
+                                      style: TextStyle(
+                                        color: backGroundColor,
                                       ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text(
-                                            'Não',
-                                            style: TextStyle(
-                                              color: backGroundColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                      textAlign: TextAlign.justify,
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text(
+                                          'Não',
+                                          style: TextStyle(
+                                            color: backGroundColor,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            await DB.instance
-                                                .deletePessoa(_controllerID);
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          await DB.instance.deletePessoa(
+                                              _controllerEmail.text.trim());
 
-                                            await Future.delayed(
-                                                const Duration(seconds: 2));
-                                            // ignore: use_build_context_synchronously
-                                            Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const NavigatorLoginPage(),
-                                              ),
-                                            );
-                                          },
-                                          child: const Text(
-                                            'Sim',
-                                            style: TextStyle(
-                                              color: backGroundColor,
-                                              fontWeight: FontWeight.bold,
+                                          await Future.delayed(
+                                            const Duration(seconds: 2),
+                                          );
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const NavigatorLoginPage(),
                                             ),
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Sim',
+                                          style: TextStyle(
+                                            color: backGroundColor,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                      ],
-                                    );
-                                  });
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
                             },
                             style: ButtonStyle(
                               elevation: MaterialStateProperty.all(20),

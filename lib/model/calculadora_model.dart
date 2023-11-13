@@ -7,12 +7,12 @@ class CalculadoraIMCModel extends PessoaModel {
     required this.imc,
     required double peso,
     required double altura,
-    required int id,
+    required String email,
     required String nome,
     required String sexo,
     required String foto,
   }) : super(
-          id: id,
+          email: email,
           nome: nome,
           idade: 0,
           altura: altura,
@@ -25,7 +25,7 @@ class CalculadoraIMCModel extends PessoaModel {
   Map<String, dynamic> toMap() {
     return {
       'nome': nome,
-      'seu_imc': imc,
+      'imc': imc,
       'peso': peso,
       'sexo': sexo,
       'idade': idade,

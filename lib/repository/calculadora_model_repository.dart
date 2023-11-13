@@ -15,10 +15,10 @@ class CalculadoraIMC {
         await database.rawQuery('SELECT * FROM CALCULADORA');
 
     CalculadoraIMCModel _calculadoraIMCModel = CalculadoraIMCModel(
-      imc: _list[0]['seu_imc'],
+      imc: _list[0]['imc'],
       peso: _list[0]['peso'],
       altura: _list[0]['altura'],
-      id: _list[0]['id'],
+      email: _list[0]['email'],
       nome: _list[0]['nome'],
       sexo: _list[0]['sexo'],
       foto: _list[0]['foto'],
@@ -65,7 +65,7 @@ class CalculadoraIMC {
       'CALCULADORA',
       {
         'nome': '',
-        'seu_imc': _imc,
+        'imc': _imc,
         'classificacao': _classificacao,
         'risco_comorbidade': _riscoComorbidade,
         'peso': peso,

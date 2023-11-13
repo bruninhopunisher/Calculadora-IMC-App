@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:calculadora_imc/database/db.dart';
-import 'package:calculadora_imc/model/calculadora_model.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -25,6 +25,7 @@ class _SignUPPageState extends State<SignUPPage> {
 
   XFile? _image;
 
+  final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerNome = TextEditingController();
   final TextEditingController _controllerIdade = TextEditingController();
   final TextEditingController _controllerAltura = TextEditingController();
@@ -128,11 +129,14 @@ class _SignUPPageState extends State<SignUPPage> {
                                             String name =
                                                 basename(_image!.path);
                                             await _image!.saveTo("$path/$name");
+                                            // ignore: use_build_context_synchronously
                                             Navigator.pop(context);
 
                                             cropImage(_image!);
-                                            print(
-                                                'Camera---------- ${_image.toString()}');
+                                            if (kDebugMode) {
+                                              print(
+                                                  'Camera---------- ${_image.toString()}');
+                                            }
                                           }
                                         },
                                       ),
@@ -188,6 +192,37 @@ class _SignUPPageState extends State<SignUPPage> {
                                   ),
                                   radius: 50,
                                 ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 25, right: 25, bottom: 20),
+                        child: TextField(
+                          textInputAction: TextInputAction.next,
+                          controller: _controllerEmail,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            labelStyle: const TextStyle(
+                              color: fontColorCard,
+                              fontSize: 20,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: fontColorCard,
+                                width: 3,
+                              ),
+                            ),
+                          ),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: backGroundColor,
+                            wordSpacing: 5,
+                          ),
                         ),
                       ),
                       Padding(
@@ -332,7 +367,9 @@ class _SignUPPageState extends State<SignUPPage> {
                                 setState(() {
                                   _value = value.toString();
                                   _controllerSexo.text = _value;
-                                  print(_controllerSexo.text);
+                                  if (kDebugMode) {
+                                    print(_controllerSexo.text);
+                                  }
                                 });
                               },
                             ),
@@ -354,7 +391,9 @@ class _SignUPPageState extends State<SignUPPage> {
                                 setState(() {
                                   _value = value.toString();
                                   _controllerSexo.text = _value;
-                                  print(_controllerSexo.text);
+                                  if (kDebugMode) {
+                                    print(_controllerSexo.text);
+                                  }
                                 });
                               },
                             ),
@@ -373,8 +412,27 @@ class _SignUPPageState extends State<SignUPPage> {
                         child: ElevatedButton(
                           onPressed: () async {
                             FocusManager.instance.primaryFocus?.unfocus();
-
-                            if (_controllerNome.text.trim().isEmpty) {
+                            if (_controllerEmail.text.trim().isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text(
+                                    'Digite um valor válido para o nome!',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                      color: cardColor,
+                                    ),
+                                  ),
+                                  duration: const Duration(milliseconds: 2000),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                              );
+                              return;
+                            } else if (_controllerNome.text.trim().isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text(
@@ -471,7 +529,7 @@ class _SignUPPageState extends State<SignUPPage> {
                               return;
                             } else {
                               PessoaModel pessoaModelLogin = PessoaModel(
-                                id: 0,
+                                email: _controllerEmail.text.toLowerCase(),
                                 nome: _controllerNome.text,
                                 idade: int.parse(_controllerIdade.text),
                                 altura: double.parse(_controllerAltura.text),
@@ -480,21 +538,8 @@ class _SignUPPageState extends State<SignUPPage> {
                                 foto: _image?.path ?? '',
                               );
 
-                              CalculadoraIMCModel calculadoraIMCModel =
-                                  CalculadoraIMCModel(
-                                imc: 0,
-                                peso: 0,
-                                altura: 0,
-                                id: 0,
-                                nome: '',
-                                sexo: '',
-                                foto: '',
-                              );
-
                               await DB.instance
                                   .openTablePessoa(pessoaModelLogin);
-                              await DB.instance
-                                  .openTableCalculadora(calculadoraIMCModel);
 
                               await Future.delayed(
                                 const Duration(seconds: 2),
