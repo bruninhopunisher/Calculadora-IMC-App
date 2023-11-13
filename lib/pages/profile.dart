@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -30,7 +31,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _controllerAltura = TextEditingController();
   final TextEditingController _controllerPeso = TextEditingController();
   String _controllerSexo = '';
-  String _controllerID = '';
 
   XFile? _image;
   // final String _imageNetwork =
@@ -255,18 +255,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 },
                               );
                             },
-                            child: _image == null
-                                ? const CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        'https://cdn-icons-png.flaticon.com/512/12631/12631691.png'),
-                                    radius: 50,
-                                  )
-                                : CircleAvatar(
-                                    backgroundImage: FileImage(
-                                      File(_image!.path),
-                                    ),
-                                    radius: 50,
-                                  ),
+                            child: CircleAvatar(
+                              backgroundImage: FileImage(
+                                File(_image!.path),
+                              ),
+                              radius: 50,
+                            ),
                           ),
                         ),
                         Padding(
@@ -700,9 +694,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                           // ignore: use_build_context_synchronously
                                           Navigator.pushReplacement(
                                             context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const NavigatorLoginPage(),
+                                            PageTransition(
+                                              child: const NavigatorLoginPage(),
+                                              type: PageTransitionType
+                                                  .leftToRight,
+                                              isIos: true,
+                                              duration: const Duration(
+                                                milliseconds: 750,
+                                              ),
                                             ),
                                           );
                                         },

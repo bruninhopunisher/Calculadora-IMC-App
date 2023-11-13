@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
 import 'package:path/path.dart';
@@ -24,6 +25,7 @@ class _SignUPPageState extends State<SignUPPage> {
   final ImagePicker _picker = ImagePicker();
 
   XFile? _image;
+  final XFile _imageFile = XFile('assets/exercise.png');
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerNome = TextEditingController();
@@ -535,7 +537,7 @@ class _SignUPPageState extends State<SignUPPage> {
                                 altura: double.parse(_controllerAltura.text),
                                 peso: double.parse(_controllerPeso.text),
                                 sexo: _controllerSexo.text,
-                                foto: _image?.path ?? '',
+                                foto: _image?.path ?? _imageFile.path,
                               );
 
                               await DB.instance
@@ -547,8 +549,10 @@ class _SignUPPageState extends State<SignUPPage> {
                               // ignore: use_build_context_synchronously
                               Navigator.pushAndRemoveUntil(
                                   context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const NavigatorPage(),
+                                  PageTransition(
+                                    child: const NavigatorPage(),
+                                    type: PageTransitionType.rightToLeft,
+                                    duration: const Duration(milliseconds: 750),
                                   ),
                                   (route) => false);
                             }
