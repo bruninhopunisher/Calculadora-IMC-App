@@ -11,8 +11,10 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SignUPPage extends StatefulWidget {
   const SignUPPage({super.key});
@@ -25,7 +27,7 @@ class _SignUPPageState extends State<SignUPPage> {
   final ImagePicker _picker = ImagePicker();
 
   XFile? _image;
-  final XFile _imageFile = XFile('assets/exercise.png');
+  File _imageFile = File('assets/exercise.png');
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerNome = TextEditingController();
@@ -58,6 +60,17 @@ class _SignUPPageState extends State<SignUPPage> {
       ],
     );
     setState(() {});
+  }
+
+  Future<File> getImageFileFromAssets(String path) async {
+    final byteData = await rootBundle.load('assets/$path');
+
+    final file = File('${(await getTemporaryDirectory()).path}/$path');
+    await file.create(recursive: true);
+    await file.writeAsBytes(byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    return file;
   }
 
   String _value = '';
@@ -530,31 +543,63 @@ class _SignUPPageState extends State<SignUPPage> {
                               );
                               return;
                             } else {
-                              PessoaModel pessoaModelLogin = PessoaModel(
-                                email: _controllerEmail.text.toLowerCase(),
-                                nome: _controllerNome.text,
-                                idade: int.parse(_controllerIdade.text),
-                                altura: double.parse(_controllerAltura.text),
-                                peso: double.parse(_controllerPeso.text),
-                                sexo: _controllerSexo.text,
-                                foto: _image?.path ?? _imageFile.path,
-                              );
+                              if (_image == null || _image!.path.isEmpty) {
+                                File imagePath = await getImageFileFromAssets(
+                                    'exercise.png');
+                                PessoaModel pessoaModelLogin = PessoaModel(
+                                  email: _controllerEmail.text.toLowerCase(),
+                                  nome: _controllerNome.text,
+                                  idade: int.parse(_controllerIdade.text),
+                                  altura: double.parse(_controllerAltura.text),
+                                  peso: double.parse(_controllerPeso.text),
+                                  sexo: _controllerSexo.text,
+                                  foto: imagePath.path,
+                                );
 
-                              await DB.instance
-                                  .openTablePessoa(pessoaModelLogin);
+                                await DB.instance
+                                    .openTablePessoa(pessoaModelLogin);
 
-                              await Future.delayed(
-                                const Duration(seconds: 2),
-                              );
-                              // ignore: use_build_context_synchronously
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  PageTransition(
-                                    child: const NavigatorPage(),
-                                    type: PageTransitionType.rightToLeft,
-                                    duration: const Duration(milliseconds: 750),
-                                  ),
-                                  (route) => false);
+                                await Future.delayed(
+                                  const Duration(seconds: 2),
+                                );
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    PageTransition(
+                                      child: const NavigatorPage(),
+                                      type: PageTransitionType.rightToLeft,
+                                      duration:
+                                          const Duration(milliseconds: 750),
+                                    ),
+                                    (route) => false);
+                              } else {
+                                PessoaModel pessoaModelLogin = PessoaModel(
+                                  email: _controllerEmail.text.toLowerCase(),
+                                  nome: _controllerNome.text,
+                                  idade: int.parse(_controllerIdade.text),
+                                  altura: double.parse(_controllerAltura.text),
+                                  peso: double.parse(_controllerPeso.text),
+                                  sexo: _controllerSexo.text,
+                                  foto: _image!.path,
+                                );
+
+                                await DB.instance
+                                    .openTablePessoa(pessoaModelLogin);
+
+                                await Future.delayed(
+                                  const Duration(seconds: 2),
+                                );
+                                // ignore: use_build_context_synchronously
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    PageTransition(
+                                      child: const NavigatorPage(),
+                                      type: PageTransitionType.rightToLeft,
+                                      duration:
+                                          const Duration(milliseconds: 750),
+                                    ),
+                                    (route) => false);
+                              }
                             }
                           },
                           style: ButtonStyle(

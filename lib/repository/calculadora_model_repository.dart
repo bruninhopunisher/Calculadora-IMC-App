@@ -11,22 +11,22 @@ class CalculadoraIMC {
 
   _getDadosCalculadora() async {
     Database database = await DB.instance.database;
-    List<Map<String, dynamic>> _list =
+    List<Map<String, dynamic>> list =
         await database.rawQuery('SELECT * FROM CALCULADORA');
 
-    CalculadoraIMCModel _calculadoraIMCModel = CalculadoraIMCModel(
-      imc: _list[0]['imc'],
-      peso: _list[0]['peso'],
-      altura: _list[0]['altura'],
-      email: _list[0]['email'],
-      nome: _list[0]['nome'],
-      sexo: _list[0]['sexo'],
-      foto: _list[0]['foto'],
+    CalculadoraIMCModel calculadoraIMCModel = CalculadoraIMCModel(
+      imc: list[0]['imc'],
+      peso: list[0]['peso'],
+      altura: list[0]['altura'],
+      email: list[0]['email'],
+      nome: list[0]['nome'],
+      sexo: list[0]['sexo'],
+      foto: list[0]['foto'],
     );
 
-    peso = _calculadoraIMCModel.peso;
-    altura = _calculadoraIMCModel.altura;
-    _imc = _calculadoraIMCModel.imc;
+    peso = calculadoraIMCModel.peso;
+    altura = calculadoraIMCModel.altura;
+    _imc = calculadoraIMCModel.imc;
   }
 
   Future<double> _imcCalculator() async {
