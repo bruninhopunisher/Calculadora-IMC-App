@@ -7,6 +7,7 @@ import 'package:sqflite/sqflite.dart';
 class CalculadoraIMCRepository {
   Future<void> calcularIMC() async {
     double imc = 0;
+    String classificacaoList = '';
     String classificacao = '';
     String riscoComorbidade = '';
     Database database = await DB.instance.database;
@@ -30,22 +31,24 @@ class CalculadoraIMCRepository {
         (calculadoraIMCModel.peso * 10000) / pow(calculadoraIMCModel.altura, 2);
 
     if (imc < 18.5) {
-      classificacao = 'Abaixo do peso \n Baixo';
+      classificacaoList = 'Abaixo do peso - Baixo';
     } else if (imc >= 18.5 && imc <= 24.9) {
+      classificacaoList = 'Peso normal - Normal';
     } else if (imc >= 25 && imc <= 29.9) {
-      classificacao = 'Sobrepeso \n Pouco elevado';
+      classificacaoList = 'Sobrepeso - Pouco elevado';
     } else if (imc >= 30 && imc <= 34.9) {
-      classificacao = 'Obesidade grau 1 \n Elevado';
+      classificacaoList = 'Obesidade grau 1 - Elevado';
     } else if (imc >= 35 && imc <= 39.9) {
-      classificacao = 'Obesidade grau 2 \n Muito elevado';
+      classificacaoList = 'Obesidade grau 2 - Muito elevado';
     } else if (imc >= 40) {
-      classificacao = 'Obesidade grau 3 \n Muitíssimo elevado';
+      classificacaoList = 'Obesidade grau 3 - Muitíssimo elevado';
     }
 
-    List<String> spliteClassificacao = classificacao.split('\n');
-    if (spliteClassificacao.length > 1) {
-      riscoComorbidade = spliteClassificacao[1];
-    }
+    List<String> spliteClassificacao = classificacaoList.split('-');
+
+    imc = double.parse(imc.toStringAsFixed(2));
+    classificacao = spliteClassificacao[0].trim();
+    riscoComorbidade = spliteClassificacao[1].trim();
 
     CalculadoraIMCModel calculadoraIMCModelUpdate = CalculadoraIMCModel(
       imc: imc,
@@ -60,13 +63,5 @@ class CalculadoraIMCRepository {
     );
 
     await DB.instance.updateCalculadora(calculadoraIMCModelUpdate);
-
-    // if (kDebugMode) {
-    //   print('----------------- IMC ----------------- ${imc.toString()}');
-    //   print(
-    //       '----------------- Classificação ----------------- ${classificacao.toString()}');
-    //   print(
-    //       '----------------- Risco Comorbidade ----------------- ${riscoComorbidade.toString()}');
-    // }
   }
 }
