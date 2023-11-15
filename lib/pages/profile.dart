@@ -34,9 +34,6 @@ class _ProfilePageState extends State<ProfilePage> {
   String _controllerSexo = '';
 
   XFile? _image;
-  // XFile? _imageFile;
-  // final String _imageNetwork =
-  //     'https://cdn-icons-png.flaticon.com/512/12631/12631691.png';
 
   cropImage(XFile imageFile) async {
     // ignore: unused_local_variable
