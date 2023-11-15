@@ -184,6 +184,18 @@ class DB {
     return await database.insert('CALCULADORA', calculadoraIMCModel.toMap());
   }
 
+  // Update de dados na tabela Calculadora
+  Future<void> updateCalculadora(
+      CalculadoraIMCModel calculadoraIMCModel) async {
+    Database database = await _initDatabase();
+    await database.update(
+      'CALCULADORA',
+      calculadoraIMCModel.toMap(),
+      where: 'email = ?',
+      whereArgs: [calculadoraIMCModel.email],
+    );
+  }
+
   // Recuperar dados na tabela calculadora
   Future<List<Map<String, dynamic>>> retrieveDataFromCalculadora() async {
     Database database = await _initDatabase();

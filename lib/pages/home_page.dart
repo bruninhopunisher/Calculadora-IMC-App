@@ -17,6 +17,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _nome = '';
+  String _classificacao = '';
+  String _riscoComorbidade = '';
   XFile? _image;
 
   @override
@@ -32,22 +34,27 @@ class _HomePageState extends State<HomePage> {
         await database.rawQuery('SELECT * FROM CALCULADORA');
 
     CalculadoraIMCModel calculadoraIMCModel = CalculadoraIMCModel(
-      imc: listCalculadora[0]['imc'] ?? 0,
-      peso: listCalculadora[0]['peso'] ?? 0,
-      altura: listCalculadora[0]['altura'],
       nome: listCalculadora[0]['nome'],
-      email: listCalculadora[0]['email'],
-      sexo: listCalculadora[0]['sexo'],
       foto: listCalculadora[0]['foto'],
+      imc: listCalculadora[0]['imc'],
+      classificacao: listCalculadora[0]['classificacao'],
+      riscoComorbidade: listCalculadora[0]['risco_comorbidade'],
+      peso: 0,
+      altura: 0,
+      email: '',
+      sexo: '',
     );
 
     _nome = calculadoraIMCModel.nome;
+    _classificacao = calculadoraIMCModel.classificacao;
+    _riscoComorbidade = calculadoraIMCModel.riscoComorbidade;
     _image = XFile(calculadoraIMCModel.foto);
 
     if (kDebugMode) {
       print(
           '--------------Calculadora Home Page ----------------- ${calculadoraIMCModel.toMap()}');
     }
+
     setState(() {});
   }
 
@@ -81,7 +88,8 @@ class _HomePageState extends State<HomePage> {
                       ? const CircleAvatar(
                           radius: 50,
                           backgroundImage: NetworkImage(
-                              'https://cdn-icons-png.flaticon.com/512/12631/12631691.png'),
+                            'https://cdn-icons-png.flaticon.com/512/12631/12631691.png',
+                          ),
                         )
                       : CircleAvatar(
                           backgroundImage: FileImage(
@@ -127,9 +135,9 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   margin: const EdgeInsets.only(bottom: 20),
                   alignment: Alignment.center,
-                  child: const Text(
-                    '',
-                    style: TextStyle(
+                  child: Text(
+                    _classificacao,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: fontColorCard,
@@ -150,12 +158,12 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   margin: const EdgeInsets.only(bottom: 20),
                   alignment: Alignment.center,
-                  child: const Text(
-                    '',
-                    style: TextStyle(
+                  child: Text(
+                    _riscoComorbidade,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: fontColorCard,
+                      color: backGroundColor,
                     ),
                   ),
                 ),

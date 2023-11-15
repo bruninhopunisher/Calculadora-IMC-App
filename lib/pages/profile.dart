@@ -6,12 +6,14 @@ import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_login_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -60,6 +62,17 @@ class _ProfilePageState extends State<ProfilePage> {
       ],
     );
     setState(() {});
+  }
+
+  Future<File> getImageFileFromAssets(String path) async {
+    final byteData = await rootBundle.load('assets/$path');
+
+    final file = File('${(await getTemporaryDirectory()).path}/$path');
+    await file.create(recursive: true);
+    await file.writeAsBytes(byteData.buffer
+        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    return file;
   }
 
   @override
@@ -216,6 +229,68 @@ class _ProfilePageState extends State<ProfilePage> {
                                             Navigator.pop(context);
                                             cropImage(_image!);
                                           }
+                                        },
+                                      ),
+                                      ListTile(
+                                        leading: const FaIcon(
+                                          FontAwesomeIcons.trash,
+                                          color: backGroundColor,
+                                          size: 30,
+                                        ),
+                                        title: const Text(
+                                          'Excluir Foto',
+                                          style: TextStyle(
+                                            color: backGroundColor,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        onTap: () async {
+                                          File imagePath =
+                                              await getImageFileFromAssets(
+                                                  'exercise.png');
+
+                                          PessoaModel pessoaModel = PessoaModel(
+                                            email: _controllerEmail.text.trim(),
+                                            nome: _controllerNome.text.trim(),
+                                            idade: int.parse(
+                                                _controllerIdade.text),
+                                            altura: double.parse(
+                                                _controllerAltura.text),
+                                            peso: double.parse(
+                                                _controllerPeso.text),
+                                            sexo: _controllerSexo.trim(),
+                                            foto: imagePath.path,
+                                          );
+
+                                          await DB.instance
+                                              .updatePessoa(pessoaModel);
+                                          // ignore: use_build_context_synchronously
+                                          Navigator.pop(context);
+
+                                          // ignore: use_build_context_synchronously
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: const Text(
+                                                'Foto excluída com sucesso!',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: cardColor,
+                                                ),
+                                              ),
+                                              duration: const Duration(
+                                                  milliseconds: 2000),
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                              ),
+                                            ),
+                                          );
                                         },
                                       ),
                                     ],
@@ -654,7 +729,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   TextButton(
                                     onPressed: () async {
                                       await DB.instance.deletePessoa(
-                                          _controllerEmail.text.trim());
+                                        _controllerEmail.text.trim(),
+                                      );
 
                                       await Future.delayed(
                                         const Duration(seconds: 2),

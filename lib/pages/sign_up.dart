@@ -27,7 +27,6 @@ class _SignUPPageState extends State<SignUPPage> {
   final ImagePicker _picker = ImagePicker();
 
   XFile? _image;
-  File _imageFile = File('assets/exercise.png');
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerNome = TextEditingController();
