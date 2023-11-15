@@ -5,6 +5,7 @@ import 'package:calculadora_imc/utils/navigator_page.dart';
 import 'package:calculadora_imc/utils/terms_text.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:sqflite/sqflite.dart';
 
 class LoginPage extends StatefulWidget {
@@ -138,11 +139,13 @@ class _LoginPageState extends State<LoginPage> {
                             )
                           : Navigator.pushAndRemoveUntil(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => const NavigatorPage(),
+                              PageTransition(
+                                child: const NavigatorPage(),
+                                type: PageTransitionType.rightToLeft,
+                                isIos: true,
+                                duration: const Duration(milliseconds: 750),
                               ),
-                              (route) => false,
-                            );
+                              (route) => false);
                     },
                     style: ButtonStyle(
                       elevation: MaterialStateProperty.all(20),
