@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/model/calculadora_model.dart';
 import 'package:calculadora_imc/utils/colors.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sqflite/sqflite.dart';
@@ -17,6 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _nome = '';
+  double _imc = 0;
   String _classificacao = '';
   String _riscoComorbidade = '';
   XFile? _image;
@@ -46,14 +46,10 @@ class _HomePageState extends State<HomePage> {
     );
 
     _nome = calculadoraIMCModel.nome;
+    _imc = calculadoraIMCModel.imc;
     _classificacao = calculadoraIMCModel.classificacao;
     _riscoComorbidade = calculadoraIMCModel.riscoComorbidade;
     _image = XFile(calculadoraIMCModel.foto);
-
-    if (kDebugMode) {
-      print(
-          '--------------Calculadora Home Page ----------------- ${calculadoraIMCModel.toMap()}');
-    }
 
     setState(() {});
   }
@@ -112,12 +108,12 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   margin: const EdgeInsets.only(bottom: 20),
                   alignment: Alignment.center,
-                  child: const Text(
-                    '',
-                    style: TextStyle(
+                  child: Text(
+                    _imc.toString(),
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: fontColorCard,
+                      color: backGroundColor,
                     ),
                   ),
                 ),
@@ -140,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: fontColorCard,
+                      color: backGroundColor,
                     ),
                   ),
                 ),
