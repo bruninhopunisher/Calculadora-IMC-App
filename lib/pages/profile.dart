@@ -2,18 +2,16 @@ import 'dart:io';
 
 import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
+import 'package:calculadora_imc/repository/image_picker.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_login_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -25,6 +23,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final ImagePicker _picker = ImagePicker();
+  ImagePickerRepository imagePickerRepository = ImagePickerRepository();
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerNome = TextEditingController();
@@ -34,43 +33,6 @@ class _ProfilePageState extends State<ProfilePage> {
   String _controllerSexo = '';
 
   XFile? _image;
-
-  cropImage(XFile imageFile) async {
-    // ignore: unused_local_variable
-    CroppedFile? croppedFile = await ImageCropper().cropImage(
-      sourcePath: imageFile.path,
-      aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-        CropAspectRatioPreset.ratio3x2,
-        CropAspectRatioPreset.original,
-        CropAspectRatioPreset.ratio4x3,
-        CropAspectRatioPreset.ratio16x9
-      ],
-      uiSettings: [
-        AndroidUiSettings(
-            toolbarTitle: 'Recortar Imagem',
-            toolbarColor: backGroundColor,
-            toolbarWidgetColor: cardColor,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false),
-        IOSUiSettings(
-          title: 'Cropper',
-        ),
-      ],
-    );
-    setState(() {});
-  }
-
-  Future<File> getImageFileFromAssets(String path) async {
-    final byteData = await rootBundle.load('assets/$path');
-
-    final file = File('${(await getTemporaryDirectory()).path}/$path');
-    await file.create(recursive: true);
-    await file.writeAsBytes(byteData.buffer
-        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
-    return file;
-  }
 
   @override
   void initState() {
@@ -151,164 +113,165 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: const EdgeInsets.only(
                           left: 25, right: 25, bottom: 20),
                       child: GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              backgroundColor: cardColor,
-                              builder: (context) {
-                                return Container(
-                                  margin: const EdgeInsets.all(0),
-                                  height: 170,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      ListTile(
-                                        leading: const FaIcon(
-                                          FontAwesomeIcons.camera,
-                                          color: backGroundColor,
-                                          size: 30,
-                                        ),
-                                        title: const Text(
-                                          'Câmera',
-                                          style: TextStyle(
-                                            color: backGroundColor,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          _image = await _picker.pickImage(
-                                              source: ImageSource.camera);
-                                          if (_image != null) {
-                                            String path = (await path_provider
-                                                    .getApplicationDocumentsDirectory())
-                                                .path;
-                                            String name =
-                                                basename(_image!.path);
-                                            await _image!.saveTo("$path/$name");
-                                            // ignore: use_build_context_synchronously
-                                            Navigator.pop(context);
-
-                                            cropImage(_image!);
-                                            if (kDebugMode) {
-                                              print(
-                                                  'Camera---------- ${_image.toString()}');
-                                            }
-                                          }
-                                        },
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            backgroundColor: cardColor,
+                            builder: (context) {
+                              return Container(
+                                margin: const EdgeInsets.all(0),
+                                height: 170,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    ListTile(
+                                      leading: const FaIcon(
+                                        FontAwesomeIcons.camera,
+                                        color: backGroundColor,
+                                        size: 30,
                                       ),
-                                      ListTile(
-                                        leading: const FaIcon(
-                                          FontAwesomeIcons.images,
+                                      title: const Text(
+                                        'Câmera',
+                                        style: TextStyle(
                                           color: backGroundColor,
-                                          size: 30,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        title: const Text(
-                                          'Galeria',
-                                          style: TextStyle(
-                                            color: backGroundColor,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          _image = await _picker.pickImage(
-                                              source: ImageSource.gallery);
-                                          if (_image != null) {
-                                            String path = (await path_provider
-                                                    .getApplicationDocumentsDirectory())
-                                                .path;
-                                            String name =
-                                                basename(_image!.path);
-                                            await _image!.saveTo("$path/$name");
-                                            // ignore: use_build_context_synchronously
-                                            Navigator.pop(context);
-                                            cropImage(_image!);
-                                          }
-                                        },
                                       ),
-                                      ListTile(
-                                        leading: const FaIcon(
-                                          FontAwesomeIcons.trash,
-                                          color: backGroundColor,
-                                          size: 30,
-                                        ),
-                                        title: const Text(
-                                          'Excluir Foto',
-                                          style: TextStyle(
-                                            color: backGroundColor,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        onTap: () async {
-                                          File imagePath =
-                                              await getImageFileFromAssets(
-                                                  'exercise.png');
-
-                                          PessoaModel pessoaModel = PessoaModel(
-                                            email: _controllerEmail.text.trim(),
-                                            nome: _controllerNome.text.trim(),
-                                            idade: int.parse(
-                                                _controllerIdade.text),
-                                            altura: double.parse(
-                                                _controllerAltura.text),
-                                            peso: double.parse(
-                                                _controllerPeso.text),
-                                            sexo: _controllerSexo.trim(),
-                                            foto: imagePath.path,
-                                          );
-
-                                          await DB.instance
-                                              .updatePessoa(pessoaModel);
+                                      onTap: () async {
+                                        _image = await _picker.pickImage(
+                                            source: ImageSource.camera);
+                                        if (_image != null) {
+                                          String path = (await path_provider
+                                                  .getApplicationDocumentsDirectory())
+                                              .path;
+                                          String name = basename(_image!.path);
+                                          await _image!.saveTo("$path/$name");
                                           // ignore: use_build_context_synchronously
                                           Navigator.pop(context);
 
+                                          imagePickerRepository
+                                              .cropImage(_image!);
+                                          if (kDebugMode) {
+                                            print(
+                                                'Camera---------- ${_image.toString()}');
+                                          }
+                                        }
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: const FaIcon(
+                                        FontAwesomeIcons.images,
+                                        color: backGroundColor,
+                                        size: 30,
+                                      ),
+                                      title: const Text(
+                                        'Galeria',
+                                        style: TextStyle(
+                                          color: backGroundColor,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      onTap: () async {
+                                        _image = await _picker.pickImage(
+                                            source: ImageSource.gallery);
+                                        if (_image != null) {
+                                          String path = (await path_provider
+                                                  .getApplicationDocumentsDirectory())
+                                              .path;
+                                          String name = basename(_image!.path);
+                                          await _image!.saveTo("$path/$name");
                                           // ignore: use_build_context_synchronously
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: const Text(
-                                                'Foto excluída com sucesso!',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: cardColor,
-                                                ),
-                                              ),
-                                              duration: const Duration(
-                                                  milliseconds: 2000),
-                                              behavior:
-                                                  SnackBarBehavior.floating,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
+                                          Navigator.pop(context);
+                                          imagePickerRepository
+                                              .cropImage(_image!);
+                                        }
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: const FaIcon(
+                                        FontAwesomeIcons.trash,
+                                        color: backGroundColor,
+                                        size: 30,
+                                      ),
+                                      title: const Text(
+                                        'Excluir Foto',
+                                        style: TextStyle(
+                                          color: backGroundColor,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      onTap: () async {
+                                        File imagePath =
+                                            await imagePickerRepository
+                                                .getImageFileFromAssets(
+                                                    'exercise.png');
+
+                                        PessoaModel pessoaModel = PessoaModel(
+                                          email: _controllerEmail.text.trim(),
+                                          nome: _controllerNome.text.trim(),
+                                          idade:
+                                              int.parse(_controllerIdade.text),
+                                          altura: double.parse(
+                                              _controllerAltura.text),
+                                          peso: double.parse(
+                                              _controllerPeso.text),
+                                          sexo: _controllerSexo.trim(),
+                                          foto: imagePath.path,
+                                        );
+
+                                        await DB.instance
+                                            .updatePessoa(pessoaModel);
+                                        // ignore: use_build_context_synchronously
+                                        Navigator.pop(context);
+
+                                        // ignore: use_build_context_synchronously
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: const Text(
+                                              'Foto excluída com sucesso!',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.bold,
+                                                color: cardColor,
                                               ),
                                             ),
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: _image != null
-                              ? CircleAvatar(
-                                  backgroundImage: FileImage(
-                                    File(_image!.path),
-                                  ),
-                                  radius: 50,
-                                )
-                              : const CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: NetworkImage(
-                                      'https://cdn-icons-png.flaticon.com/512/12631/12631691.png'),
-                                  backgroundColor: Color(0xFFE0E0E0),
-                                )),
+                                            duration: const Duration(
+                                                milliseconds: 2000),
+                                            behavior: SnackBarBehavior.floating,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: _image != null
+                            ? CircleAvatar(
+                                backgroundImage: FileImage(
+                                  File(_image!.path),
+                                ),
+                                radius: 50,
+                              )
+                            : const CircleAvatar(
+                                radius: 50,
+                                backgroundImage: NetworkImage(
+                                    'https://cdn-icons-png.flaticon.com/512/12631/12631691.png'),
+                                backgroundColor: Color(0xFFE0E0E0),
+                              ),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
@@ -482,13 +445,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             value: 'Masculino',
                             groupValue: _controllerSexo,
                             onChanged: (value) {
-                              setState(() {
-                                _controllerSexo = 'Masculino';
-                                if (kDebugMode) {
-                                  print(
-                                      '---------RADIO------------------------ ${_controllerSexo.toString()}');
-                                }
-                              });
+                              setState(
+                                () {
+                                  _controllerSexo = 'Masculino';
+                                },
+                              );
                             },
                           ),
                         ),
@@ -509,10 +470,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               setState(
                                 () {
                                   _controllerSexo = 'Feminino';
-                                  if (kDebugMode) {
-                                    print(
-                                        '---------RADIO------------------------ $_controllerSexo');
-                                  }
                                 },
                               );
                             },
@@ -639,10 +596,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             );
 
                             await DB.instance.updatePessoa(pessoaModel);
-                            if (kDebugMode) {
-                              print(
-                                  '----------------------------updated: ${pessoaModel.toMap()}');
-                            }
+
                             // ignore: use_build_context_synchronously
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
