@@ -1,0 +1,2 @@
+const String textAlert =
+    'Você não possui cadastro, por favor, cadastre-se arrastando para o lado.';

@@ -31,7 +31,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController _controllerAltura = TextEditingController();
   final TextEditingController _controllerPeso = TextEditingController();
   String _controllerSexo = '';
-
   XFile? _image;
 
   @override

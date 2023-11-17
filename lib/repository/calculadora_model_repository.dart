@@ -1,8 +1,6 @@
 import 'dart:math';
-
 import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/model/calculadora_model.dart';
-import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 
 class CalculadoraIMCRepository {
@@ -27,11 +25,6 @@ class CalculadoraIMCRepository {
       sexo: list[0]['sexo'],
       foto: list[0]['foto'],
     );
-
-    if (kDebugMode) {
-      print(
-          '---------------- CalculadoraIMCRepository ------------------------ ${calculadoraIMCModel.toMap()}');
-    }
 
     imc =
         (calculadoraIMCModel.peso * 10000) / pow(calculadoraIMCModel.altura, 2);
@@ -67,7 +60,6 @@ class CalculadoraIMCRepository {
       sexo: calculadoraIMCModel.sexo,
       foto: calculadoraIMCModel.foto,
     );
-
     await DB.instance.updateCalculadora(calculadoraIMCModelUpdate);
   }
 }

@@ -77,6 +77,10 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: cardColor,
       body: RefreshIndicator(
         onRefresh: () => _refresh(),
+        strokeWidth: 3,
+        displacement: 85,
+        edgeOffset: 50,
+        color: backGroundColor,
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.55,
           child: SingleChildScrollView(
