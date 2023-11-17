@@ -4,7 +4,6 @@ import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/model/calculadora_model.dart';
 import 'package:calculadora_imc/repository/calculadora_model_repository.dart';
 import 'package:calculadora_imc/utils/colors.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sqflite/sqflite.dart';
@@ -56,11 +55,6 @@ class _HomePageState extends State<HomePage> {
     _classificacao = calculadoraIMCModel.classificacao;
     _riscoComorbidade = calculadoraIMCModel.riscoComorbidade;
     _image = XFile(calculadoraIMCModel.foto);
-
-    if (kDebugMode) {
-      print(
-          '---------------- HomePage ------------------------ ${calculadoraIMCModel.toMap()}');
-    }
 
     setState(() {});
   }

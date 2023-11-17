@@ -398,7 +398,7 @@ class _SignUPPageState extends State<SignUPPage> {
                     child: ElevatedButton(
                       onPressed: () async {
                         FocusManager.instance.primaryFocus?.unfocus();
-                        signUpRepository.fieldCheck(
+                        signUpRepository.fieldCheckSignUp(
                           context,
                           _controllerEmail,
                           _controllerNome,

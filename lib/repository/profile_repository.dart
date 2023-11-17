@@ -1,50 +1,27 @@
-import 'dart:io';
-
 import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
-import 'package:calculadora_imc/repository/image_picker.dart';
 import 'package:calculadora_imc/utils/colors.dart';
-import 'package:calculadora_imc/utils/navigator_page.dart';
+import 'package:calculadora_imc/utils/navigator_login_page.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 
-class SignUpRepository {
-  ImagePickerRepository imagePickerRepository = ImagePickerRepository();
-
-  Future<void> fieldCheckSignUp(
+class ProfileRepository {
+  Future<void> fieldCheckProfile(
     BuildContext context,
     TextEditingController controllerEmail,
     TextEditingController controllerNome,
     TextEditingController controllerIdade,
     TextEditingController controllerAltura,
     TextEditingController controllerPeso,
-    TextEditingController controllerSexo,
+    String controllerSexo,
+    XFile? image,
   ) async {
-    if (controllerEmail.text.trim().isEmpty) {
+    if (controllerNome.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
-            'Digite um valor válido para o email!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-              color: cardColor,
-            ),
-          ),
-          duration: const Duration(milliseconds: 2000),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-        ),
-      );
-      return;
-    } else if (controllerNome.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
-            'O campo nome não pode ser vazio!',
+            'Digite um valor válido para o nome!',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 17,
@@ -82,8 +59,8 @@ class SignUpRepository {
       return;
     } else if (controllerAltura.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(
+        const SnackBar(
+          content: Text(
             'O campo altura não pode ser vazio!',
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -91,11 +68,6 @@ class SignUpRepository {
               fontWeight: FontWeight.bold,
               color: cardColor,
             ),
-          ),
-          duration: const Duration(milliseconds: 2000),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
           ),
         ),
       );
@@ -120,7 +92,7 @@ class SignUpRepository {
         ),
       );
       return;
-    } else if (controllerSexo.text.trim().isEmpty) {
+    } else if (controllerSexo.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
@@ -141,61 +113,63 @@ class SignUpRepository {
       );
       return;
     } else {
-      if (imagePickerRepository.image == null ||
-          imagePickerRepository.image!.path.isEmpty) {
-        File imagePath =
-            await imagePickerRepository.getImageFileFromAssets('exercise.png');
-        PessoaModel pessoaModelLogin = PessoaModel(
-          email: controllerEmail.text.toLowerCase(),
-          nome: controllerNome.text,
-          idade: int.parse(controllerIdade.text),
-          altura: double.parse(controllerAltura.text),
-          peso: double.parse(controllerPeso.text),
-          sexo: controllerSexo.text,
-          foto: imagePath.path,
-        );
+      PessoaModel pessoaModel = PessoaModel(
+        email: controllerEmail.text.trim(),
+        nome: controllerNome.text.trim(),
+        idade: int.parse(controllerIdade.text),
+        altura: double.parse(controllerAltura.text),
+        peso: double.parse(controllerPeso.text),
+        sexo: controllerSexo.trim(),
+        foto: image!.path,
+      );
 
-        await DB.instance.openTablePessoa(pessoaModelLogin);
+      await DB.instance.updatePessoa(pessoaModel);
 
-        await Future.delayed(
-          const Duration(seconds: 2),
-        );
-        // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(
-            context,
-            PageTransition(
-              child: const NavigatorPage(),
-              type: PageTransitionType.rightToLeft,
-              duration: const Duration(milliseconds: 750),
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Dados alterados com sucesso!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              color: cardColor,
             ),
-            (route) => false);
-      } else {
-        PessoaModel pessoaModelLogin = PessoaModel(
-          email: controllerEmail.text.toLowerCase(),
-          nome: controllerNome.text,
-          idade: int.parse(controllerIdade.text),
-          altura: double.parse(controllerAltura.text),
-          peso: double.parse(controllerPeso.text),
-          sexo: controllerSexo.text,
-          foto: imagePickerRepository.image!.path,
-        );
-
-        await DB.instance.openTablePessoa(pessoaModelLogin);
-
-        await Future.delayed(
-          const Duration(seconds: 2),
-        );
-        // ignore: use_build_context_synchronously
-        Navigator.pushAndRemoveUntil(
-            context,
-            PageTransition(
-              child: const NavigatorPage(),
-              type: PageTransitionType.rightToLeft,
-              duration: const Duration(milliseconds: 750),
-            ),
-            (route) => false);
-      }
+          ),
+          duration: const Duration(milliseconds: 2000),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+      );
     }
+  }
+
+  Future<void> deletePessoa(
+    BuildContext context,
+    TextEditingController controllerEmail,
+  ) async {
+    await DB.instance.deletePessoa(
+      controllerEmail.text.trim(),
+    );
+
+    await Future.delayed(
+      const Duration(seconds: 2),
+    );
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+      context,
+      PageTransition(
+        child: const NavigatorLoginPage(),
+        type: PageTransitionType.leftToRight,
+        isIos: true,
+        duration: const Duration(
+          milliseconds: 750,
+        ),
+      ),
+    );
     return;
   }
 }

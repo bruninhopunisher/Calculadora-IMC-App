@@ -2,7 +2,6 @@ import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/utils/colors.dart';
 import 'package:calculadora_imc/utils/navigator_login_page.dart';
 import 'package:calculadora_imc/utils/navigator_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -18,11 +17,6 @@ class _SplashScreenState extends State<SplashScreen> {
     Database database = await DB.instance.database;
     List<Map<String, dynamic>> list =
         await database.rawQuery('SELECT * FROM PESSOA');
-
-    if (kDebugMode) {
-      print(
-          '--------------------------- list -------------------------------  ${list.toString()}');
-    }
 
     if (list.isNotEmpty) {
       Future.delayed(

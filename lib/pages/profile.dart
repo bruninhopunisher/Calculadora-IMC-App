@@ -3,13 +3,12 @@ import 'dart:io';
 import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/model/pessoa_model.dart';
 import 'package:calculadora_imc/repository/image_picker.dart';
+import 'package:calculadora_imc/repository/profile_repository.dart';
 import 'package:calculadora_imc/utils/colors.dart';
-import 'package:calculadora_imc/utils/navigator_login_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -24,6 +23,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final ImagePicker _picker = ImagePicker();
   ImagePickerRepository imagePickerRepository = ImagePickerRepository();
+  ProfileRepository profileRepository = ProfileRepository();
 
   final TextEditingController _controllerEmail = TextEditingController();
   final TextEditingController _controllerNome = TextEditingController();
@@ -62,10 +62,6 @@ class _ProfilePageState extends State<ProfilePage> {
     _controllerSexo = pessoaModel.sexo;
     _image = XFile(pessoaModel.foto);
 
-    if (kDebugMode) {
-      print(
-          '----------------Pessoa------------------------ ${pessoaModel.toMap()}');
-    }
     setState(() {});
   }
 
@@ -488,134 +484,16 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: ElevatedButton(
                         onPressed: () async {
                           FocusManager.instance.primaryFocus?.unfocus();
-                          if (_controllerNome.text.trim().isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text(
-                                  'Digite um valor válido para o nome!',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: cardColor,
-                                  ),
-                                ),
-                                duration: const Duration(milliseconds: 2000),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                            );
-                            return;
-                          } else if (_controllerIdade.text.trim().isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text(
-                                  'O campo idade não pode ser vazio!',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: cardColor,
-                                  ),
-                                ),
-                                duration: const Duration(milliseconds: 2000),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                            );
-                            return;
-                          } else if (_controllerAltura.text.trim().isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'O campo altura não pode ser vazio!',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: cardColor,
-                                  ),
-                                ),
-                              ),
-                            );
-                            return;
-                          } else if (_controllerPeso.text.trim().isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text(
-                                  'O campo peso não pode ser vazio!',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: cardColor,
-                                  ),
-                                ),
-                                duration: const Duration(milliseconds: 2000),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                            );
-                            return;
-                          } else if (_controllerSexo.trim().isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text(
-                                  'O campo sexo não pode ser vazio!',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: cardColor,
-                                  ),
-                                ),
-                                duration: const Duration(milliseconds: 2000),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                            );
-                            return;
-                          } else {
-                            PessoaModel pessoaModel = PessoaModel(
-                              email: _controllerEmail.text.trim(),
-                              nome: _controllerNome.text.trim(),
-                              idade: int.parse(_controllerIdade.text),
-                              altura: double.parse(_controllerAltura.text),
-                              peso: double.parse(_controllerPeso.text),
-                              sexo: _controllerSexo.trim(),
-                              foto: _image!.path,
-                            );
-
-                            await DB.instance.updatePessoa(pessoaModel);
-
-                            // ignore: use_build_context_synchronously
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text(
-                                  'Dados alterados com sucesso!',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: cardColor,
-                                  ),
-                                ),
-                                duration: const Duration(milliseconds: 2000),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                            );
-                          }
+                          profileRepository.fieldCheckProfile(
+                            context,
+                            _controllerEmail,
+                            _controllerNome,
+                            _controllerIdade,
+                            _controllerAltura,
+                            _controllerPeso,
+                            _controllerSexo,
+                            _image,
+                          );
                         },
                         style: ButtonStyle(
                           elevation: MaterialStateProperty.all(20),
@@ -678,25 +556,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                   TextButton(
                                     onPressed: () async {
-                                      await DB.instance.deletePessoa(
-                                        _controllerEmail.text.trim(),
-                                      );
-
-                                      await Future.delayed(
-                                        const Duration(seconds: 2),
-                                      );
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.pushReplacement(
-                                        context,
-                                        PageTransition(
-                                          child: const NavigatorLoginPage(),
-                                          type: PageTransitionType.leftToRight,
-                                          isIos: true,
-                                          duration: const Duration(
-                                            milliseconds: 750,
-                                          ),
-                                        ),
-                                      );
+                                      profileRepository.deletePessoa(
+                                          context, _controllerEmail);
                                     },
                                     child: const Text(
                                       'Sim',
