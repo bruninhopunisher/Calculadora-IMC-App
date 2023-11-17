@@ -8,7 +8,6 @@ void main() {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
   FlutterNativeSplash.remove();
   runApp(const MyApp());
 }
