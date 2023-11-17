@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:calculadora_imc/database/db.dart';
 import 'package:calculadora_imc/model/calculadora_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -61,7 +60,6 @@ class CalculadoraIMCRepository {
       sexo: calculadoraIMCModel.sexo,
       foto: calculadoraIMCModel.foto,
     );
-
     await DB.instance.updateCalculadora(calculadoraIMCModelUpdate);
   }
 }
